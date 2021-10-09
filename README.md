@@ -1,6 +1,12 @@
 # challenge-bot
 Telegram bot to handle challenges
 
+## Quick Start
+To run the bot:
+```bash
+go run main.go
+```
+
 ## Schema
 ```golang
 type Challenge struct {
@@ -15,7 +21,7 @@ type Challenge struct {
 type User struct {
     ID uint64 // retrieve from Telegram
     Username string // retrieve from Telegram
-    
+
 }
 
 type Goal struct {
