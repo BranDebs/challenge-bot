@@ -1,0 +1,11 @@
+[secret]
+api_token_path = "apitoken"
+
+[db]
+host = "localhost"
+port = 5432
+user = "postgres"
+password = "postgres123"
+db_name = "challenge"
+ssl_mode = "disable"
+time_zone = "Asia/Singapore"

@@ -3,14 +3,17 @@ package bot
 import (
 	"log"
 
+	"github.com/BranDebs/challenge-bot/repository"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type Bot struct {
-	bot *tgbotapi.BotAPI
+	bot  *tgbotapi.BotAPI
+	repo repository.Repository
 }
 
-func New(apiToken string) *Bot {
+func New(apiToken string, repo repository.Repository) *Bot {
 	bot, err := tgbotapi.NewBotAPI(apiToken)
 	if err != nil {
 		log.Panic(err)
@@ -20,7 +23,8 @@ func New(apiToken string) *Bot {
 
 	bot.Debug = true
 	return &Bot{
-		bot: bot,
+		bot:  bot,
+		repo: repo,
 	}
 }
 

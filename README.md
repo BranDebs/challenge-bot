@@ -4,7 +4,28 @@ Telegram bot to handle challenges
 ## Quick Start
 To run the bot:
 ```bash
+# Create the environment
+make env
+
+# Run challenge binary
 go run main.go
+```
+
+To clean:
+```bash
+make clean
+```
+
+## Using DBA
+```bash
+# Go to localhost:1337
+
+System: PostgreSQL
+Server: challenge_db
+Username: postgres
+Password: postgres123
+Database: challenge
+
 ```
 
 ## Schema
