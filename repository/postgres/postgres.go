@@ -47,7 +47,26 @@ func (c *Client) FindChallenge(ctx context.Context, id uint64) (*model.Challenge
 }
 
 func (c *Client) ListChallenges(ctx context.Context, filters repository.Filters, offset, limit uint) ([]*model.Challenge, error) {
-	return nil, nil
+	var entities []*challengeEntity
+
+	var res *gorm.DB
+	if len(filters) > 0 {
+		res = c.db.Where(filters).Find(&entities).Offset(int(offset)).Limit(int(limit))
+	} else {
+		res = c.db.Find(&entities).Offset(int(offset)).Limit(int(limit))
+	}
+
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	challenges := make([]*model.Challenge, len(entities))
+
+	for i, e := range entities {
+		challenges[i] = e.toModel()
+	}
+
+	return challenges, nil
 }
 
 func (c *Client) CreateUser(ctx context.Context, user *model.User) error {
