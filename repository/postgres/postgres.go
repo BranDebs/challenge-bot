@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"log"
 
 	"github.com/BranDebs/challenge-bot/model"
 	"github.com/BranDebs/challenge-bot/repository"
@@ -20,12 +21,24 @@ func New(settings *Settings) repository.Repository {
 		return nil
 	}
 
+	db.AutoMigrate(&challengeEntity{})
+
 	return &Client{
 		db: db,
 	}
 }
 
 func (c *Client) CreateChallenge(ctx context.Context, challenge *model.Challenge) error {
+	var e challengeEntity
+	e.fromModel(challenge)
+
+	log.Printf("Challenge entity: %v", e)
+
+	result := c.db.Create(&e)
+	if result.Error != nil {
+		return result.Error
+	}
+
 	return nil
 }
 
