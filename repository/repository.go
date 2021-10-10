@@ -12,6 +12,7 @@ type Challenge interface {
 	CreateChallenge(ctx context.Context, challenge *model.Challenge) error
 	FindChallenge(ctx context.Context, id uint64) (*model.Challenge, error)
 	ListChallenges(ctx context.Context, filters Filters, offset, limit uint) ([]*model.Challenge, error)
+	UpdateChallenge(ctx context.Context, challenge *model.Challenge) error
 }
 
 type User interface {

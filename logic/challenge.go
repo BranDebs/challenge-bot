@@ -16,8 +16,8 @@ var (
 
 type ChallengeHandler interface {
 	CreateChallenge(ctx context.Context, challenge *model.Challenge) error
-	ListChallenges(ctx context.Context, filters repository.Filters, offset, limit uint) ([]*model.Challenge, error)
-	JoinChallenge(ctx context.Context, challengeID uint64) error
+	ListChallenges(ctx context.Context) ([]*model.Challenge, error)
+	JoinChallenge(ctx context.Context, challengeID, userID uint64) error
 }
 
 type challengeHandler struct {
@@ -37,10 +37,10 @@ func (ch challengeHandler) CreateChallenge(ctx context.Context, challenge *model
 	return nil
 }
 
-func (ch challengeHandler) ListChallenges(ctx context.Context, filters repository.Filters, offset, limit uint) ([]*model.Challenge, error) {
+func (ch challengeHandler) ListChallenges(ctx context.Context) ([]*model.Challenge, error) {
 	log.Printf("Listing challenges")
 
-	challenges, err := ch.repo.ListChallenges(ctx, filters, offset, limit)
+	challenges, err := ch.repo.ListChallenges(ctx, nil, repository.DefaultOffset, repository.DefaultLimit)
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +48,17 @@ func (ch challengeHandler) ListChallenges(ctx context.Context, filters repositor
 	return challenges, nil
 }
 
-func (ch challengeHandler) JoinChallenge(ctx context.Context, challengeID uint64) error {
+func (ch challengeHandler) JoinChallenge(ctx context.Context, challengeID, userID uint64) error {
+	challenge, err := ch.repo.FindChallenge(ctx, challengeID)
+	if err != nil {
+		return err
+	}
+
+	challenge.UserIDs = append(challenge.UserIDs, userID)
+
+	if err = ch.repo.UpdateChallenge(ctx, challenge); err != nil {
+		return err
+	}
+
 	return nil
 }

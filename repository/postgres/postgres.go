@@ -43,7 +43,14 @@ func (c *Client) CreateChallenge(ctx context.Context, challenge *model.Challenge
 }
 
 func (c *Client) FindChallenge(ctx context.Context, id uint64) (*model.Challenge, error) {
-	return nil, nil
+	var e challengeEntity
+
+	res := c.db.First(&e, id)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return e.toModel(), nil
 }
 
 func (c *Client) ListChallenges(ctx context.Context, filters repository.Filters, offset, limit uint) ([]*model.Challenge, error) {
@@ -67,6 +74,19 @@ func (c *Client) ListChallenges(ctx context.Context, filters repository.Filters,
 	}
 
 	return challenges, nil
+}
+
+func (c *Client) UpdateChallenge(ctx context.Context, challenge *model.Challenge) error {
+	var e challengeEntity
+	e.fromModel(challenge)
+
+	res := c.db.Model(&e).Updates(e)
+
+	if res.Error != nil {
+		return res.Error
+	}
+
+	return nil
 }
 
 func (c *Client) CreateUser(ctx context.Context, user *model.User) error {
