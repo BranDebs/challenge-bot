@@ -72,7 +72,6 @@ func (b *Bot) Listen() error {
 				msg = messageHandler.ShowChallengeIdMsg(msg, update.CallbackQuery)
 				b.bot.Send(msg)
 			}
-
 		}
 
 	}

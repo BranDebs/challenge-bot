@@ -3,6 +3,7 @@ package ui
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/BranDebs/challenge-bot/logic"
 
@@ -91,6 +92,17 @@ func (m MessageImpl) ShowChallengeIdMsg(msg tgbotapi.MessageConfig, query *tgbot
 	msg.ReplyMarkup = RemoveInlineKeyboard(query.Message.Chat.ID, query.Message.MessageID)
 
 	msg.Text = fmt.Sprintf("userid=%v, challengeid=%v", query.From.ID, query.Data)
-	msg.ReplyMarkup = challengeDashboardPageKeyboard()
+	challengeID, err := strconv.ParseUint(query.Data, 10, 64)
+	if err != nil {
+		msg.Text = fmt.Sprintf("Error parsing challengeID: %v, err:%v", query.Data, err)
+		return msg
+	}
+
+	msg.ReplyMarkup, err = m.keyboardProvider.GetChallengeActionKeyboard(challengeID, uint64(query.From.ID))
+	if err != nil {
+		msg.Text = fmt.Sprintf("Error getting challenge action keyboard, err:%v", err)
+		return msg
+	}
+
 	return msg
 }

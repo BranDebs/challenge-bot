@@ -1,15 +1,31 @@
 package ui
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/BranDebs/challenge-bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
+var (
+	ChallengeActionList = []string{
+		AddProgress,
+		ViewAllUsersProgress,
+		ViewYourProgressTimeline,
+	}
+)
+
+type ActionDetail struct {
+	action      string
+	challengeID uint64
+	userID      uint64
+}
+
 type KeyboardProvider interface {
 	StaticMainChallangePageKeyboard() tgbotapi.ReplyKeyboardMarkup
 	GetChallengesKeyboard(challenges []model.Challenge) tgbotapi.InlineKeyboardMarkup
+	GetChallengeActionKeyboard(challengeID uint64, userID uint64) (tgbotapi.InlineKeyboardMarkup, error)
 }
 
 type KeyboardProviderImpl struct {
@@ -17,6 +33,31 @@ type KeyboardProviderImpl struct {
 
 func NewKeyboardProvider() KeyboardProvider {
 	return KeyboardProviderImpl{}
+}
+
+func (k KeyboardProviderImpl) GetChallengeActionKeyboard(challengeID uint64, userID uint64) (tgbotapi.InlineKeyboardMarkup, error) {
+	buttons := make([]tgbotapi.InlineKeyboardButton, 0)
+	for _, action := range ChallengeActionList {
+		actionDetail := &ActionDetail{
+			action:      action,
+			challengeID: challengeID,
+			userID:      userID,
+		}
+		actionDetailStr, err := json.Marshal(actionDetail)
+		if err != nil {
+			return tgbotapi.InlineKeyboardMarkup{}, err
+		}
+
+		buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(action, string(actionDetailStr)))
+	}
+
+	buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(BackKeyword, BackKeyword))
+	keyboard := tgbotapi.InlineKeyboardMarkup{}
+	for _, button := range buttons {
+		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard,
+			tgbotapi.NewInlineKeyboardRow(button))
+	}
+	return keyboard, nil
 }
 
 // StaticMainChallangePageKeyboard returns the main page keyboard with static fields
@@ -41,28 +82,13 @@ func (k KeyboardProviderImpl) GetChallengesKeyboard(challenges []model.Challenge
 	for _, challenge := range challenges {
 		buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(challenge.Name, strconv.FormatUint(challenge.ID, 10)))
 	}
+
 	buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(BackKeyword, BackKeyword))
 	keyboard := tgbotapi.InlineKeyboardMarkup{}
 	for _, button := range buttons {
 		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard,
 			tgbotapi.NewInlineKeyboardRow(button))
 	}
-	return keyboard
-}
-
-func challengeDashboardPageKeyboard() tgbotapi.ReplyKeyboardMarkup {
-	keyboard := tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton(AddProgress),
-		),
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton(ViewAllUsersProgress),
-		),
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton(ViewYourProgressTimeline),
-		),
-	)
-	keyboard.OneTimeKeyboard = true
 	return keyboard
 }
 
