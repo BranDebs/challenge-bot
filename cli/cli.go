@@ -59,6 +59,8 @@ func (cli CLI) challengeCommand(ctx context.Context, subCmd string) error {
 		return cli.createChallenge(ctx)
 	case "list":
 		return cli.listChallenges(ctx)
+	case "join":
+		return cli.joinChallenge(ctx)
 	}
 
 	return nil
@@ -88,7 +90,7 @@ func (cli CLI) createChallenge(ctx context.Context) error {
 }
 
 func (cli CLI) listChallenges(ctx context.Context) error {
-	challenges, err := cli.cHandler.ListChallenges(ctx, nil, 0, 10)
+	challenges, err := cli.cHandler.ListChallenges(ctx)
 	if err != nil {
 		return err
 	}
@@ -99,4 +101,15 @@ func (cli CLI) listChallenges(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (cli CLI) joinChallenge(ctx context.Context) error {
+	if err := cli.cHandler.JoinChallenge(ctx, 5, 987); err != nil {
+		return err
+	}
+
+	log.Println("Joined challenge.")
+
+	return nil
+
 }
