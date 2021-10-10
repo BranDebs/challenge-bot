@@ -64,6 +64,8 @@ func (cli CLI) challengeCommand(ctx context.Context, subCmd string) error {
 		return cli.createChallenge(ctx)
 	case "list":
 		return cli.listChallenges(ctx)
+	case "find":
+		return cli.findChallenge(ctx)
 	case "join":
 		return cli.joinChallenge(ctx)
 	}
@@ -104,6 +106,17 @@ func (cli CLI) listChallenges(ctx context.Context) error {
 	for _, c := range challenges {
 		log.Printf("%+v\n", *c)
 	}
+
+	return nil
+}
+
+func (cli CLI) findChallenge(ctx context.Context) error {
+	challenge, err := cli.cHandler.FindChallenge(ctx, 5)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Challenge: %+v", *challenge)
 
 	return nil
 }

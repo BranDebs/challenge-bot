@@ -18,6 +18,7 @@ var (
 type ChallengeHandler interface {
 	CreateChallenge(ctx context.Context, challenge *model.Challenge) error
 	ListChallenges(ctx context.Context) ([]*model.Challenge, error)
+	FindChallenge(ctx context.Context, id uint64) (*model.Challenge, error)
 	JoinChallenge(ctx context.Context, challengeID, userID uint64) error
 }
 
@@ -39,7 +40,7 @@ func (ch challengeHandler) CreateChallenge(ctx context.Context, challenge *model
 }
 
 func (ch challengeHandler) ListChallenges(ctx context.Context) ([]*model.Challenge, error) {
-	log.Printf("Listing challenges")
+	log.Println("Listing challenges")
 
 	challenges, err := ch.repo.ListChallenges(ctx, nil, repository.DefaultOffset, repository.DefaultLimit)
 	if err != nil {
@@ -47,6 +48,17 @@ func (ch challengeHandler) ListChallenges(ctx context.Context) ([]*model.Challen
 	}
 
 	return challenges, nil
+}
+
+func (ch challengeHandler) FindChallenge(ctx context.Context, id uint64) (*model.Challenge, error) {
+	log.Println("Find challenge")
+
+	challenge, err := ch.repo.FindChallenge(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return challenge, nil
 }
 
 func (ch challengeHandler) JoinChallenge(ctx context.Context, challengeID, userID uint64) error {
