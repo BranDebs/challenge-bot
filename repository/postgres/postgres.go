@@ -21,8 +21,7 @@ func New(settings *Settings) repository.Repository {
 		return nil
 	}
 
-	db.AutoMigrate(&challengeEntity{})
-	db.AutoMigrate(&goalEntity{})
+	db.AutoMigrate(&challengeEntity{}, &goalEntity{}, &progressEntity{})
 
 	return &Client{
 		db: db,
@@ -151,12 +150,50 @@ func (c *Client) ListGoals(ctx context.Context, filters repository.Filters, offs
 }
 
 func (c *Client) CreateProgress(ctx context.Context, progress *model.Progress) error {
+	var e progressEntity
+
+	e.fromModel(progress)
+
+	log.Printf("Progress entity: %+v\n", e)
+
+	res := c.db.Create(&e)
+	if res.Error != nil {
+		return res.Error
+	}
+
 	return nil
 }
 func (c *Client) FindProgress(ctx context.Context, id uint64) (*model.Progress, error) {
-	return nil, nil
+	var e progressEntity
+
+	res := c.db.First(&e, id)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return e.toModel(), nil
 }
 
-func (c *Client) ListProgress(ctx context.Context, filter repository.Filters, offset, limit uint) ([]*model.Progress, error) {
-	return nil, nil
+func (c *Client) ListProgress(ctx context.Context, filters repository.Filters, offset, limit uint) ([]*model.Progress, error) {
+	var entities []*progressEntity
+
+	var res *gorm.DB
+	if len(filters) > 0 {
+		repoFilters := map[string]interface{}(filters)
+		res = c.db.Where(repoFilters).Find(&entities).Offset(int(offset)).Limit(int(limit))
+	} else {
+		res = c.db.Find(&entities).Offset(int(offset)).Limit(int(limit))
+	}
+
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	progress := make([]*model.Progress, len(entities))
+
+	for i, e := range entities {
+		progress[i] = e.toModel()
+	}
+
+	return progress, nil
 }

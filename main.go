@@ -54,8 +54,6 @@ func setupDB(conf config.Configer) (repository.Repository, error) {
 		return nil, err
 	}
 
-	log.Printf("DB settings: %+v", dbSettings)
-
 	return postgres.New(&dbSettings), nil
 }
 

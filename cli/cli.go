@@ -23,12 +23,14 @@ var (
 type CLI struct {
 	cHandler logic.ChallengeHandler
 	gHandler logic.GoalHandler
+	pHandler logic.ProgressHandler
 }
 
 func New(handler logic.Handler) *CLI {
 	return &CLI{
 		cHandler: handler,
 		gHandler: handler,
+		pHandler: handler,
 	}
 }
 
@@ -51,6 +53,8 @@ func (cli CLI) Process(cmd command, subCmd string) error {
 		return cli.challengeCommand(context.Background(), subCmd)
 	case goal:
 		return cli.goalCommand(context.Background(), subCmd)
+	case progress:
+		return cli.progressCommand(context.Background(), subCmd)
 	case exit:
 		return errExit
 	}
@@ -162,5 +166,51 @@ func (cli CLI) findGoal(ctx context.Context) error {
 	}
 
 	log.Printf("Find goal: %+v\n", *goal)
+	return nil
+}
+
+func (cli CLI) progressCommand(ctx context.Context, subCmd string) error {
+	switch subCmd {
+	case "create":
+		return cli.createProgress(ctx)
+	case "list":
+		return cli.listProgress(ctx)
+	}
+	return nil
+}
+
+func (cli CLI) createProgress(ctx context.Context) error {
+	progress := &model.Progress{
+		UserID:      123,
+		ChallengeID: 5,
+		Value:       []byte(`{"weight": 11}`),
+		Date:        uint64(time.Now().Unix()),
+	}
+
+	completed, err := cli.pHandler.CreateProgress(ctx, progress)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Create progress: %+v\n", *progress)
+
+	if completed {
+		fmt.Println("Completed challenge!")
+	}
+
+	return nil
+}
+
+func (cli CLI) listProgress(ctx context.Context) error {
+	progress, err := cli.pHandler.ListProgress(ctx, 5, 123)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Listing progress")
+	for _, p := range progress {
+		fmt.Printf("progress: %+v\n", *p)
+	}
+
 	return nil
 }

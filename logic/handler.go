@@ -7,11 +7,13 @@ import (
 type Handler interface {
 	ChallengeHandler
 	GoalHandler
+	ProgressHandler
 }
 
 type handler struct {
 	challengeHandler
 	goalHandler
+	progressHandler
 }
 
 func New(repo repository.Repository) Handler {
@@ -21,6 +23,11 @@ func New(repo repository.Repository) Handler {
 		},
 		goalHandler: goalHandler{
 			repo: repo,
+		},
+		progressHandler: progressHandler{
+			cRepo: repo,
+			pRepo: repo,
+			gRepo: repo,
 		},
 	}
 }

@@ -58,3 +58,29 @@ func (e goalEntity) toModel() *model.Goal {
 		Value:       e.Value,
 	}
 }
+
+type progressEntity struct {
+	ID          uint64
+	UserID      uint64
+	ChallengeID uint64
+	Value       []byte
+	Date        uint64
+}
+
+func (e *progressEntity) fromModel(progress *model.Progress) {
+	e.ID = progress.ID
+	e.UserID = progress.UserID
+	e.ChallengeID = progress.ChallengeID
+	e.Value = progress.Value
+	e.Date = progress.Date
+}
+
+func (e progressEntity) toModel() *model.Progress {
+	return &model.Progress{
+		ID:          e.ID,
+		UserID:      e.UserID,
+		ChallengeID: e.ChallengeID,
+		Value:       e.Value,
+		Date:        e.Date,
+	}
+}
