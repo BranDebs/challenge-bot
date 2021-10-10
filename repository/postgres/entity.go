@@ -35,3 +35,26 @@ func (e challengeEntity) toModel() *model.Challenge {
 		Schema:      e.Schema,
 	}
 }
+
+type goalEntity struct {
+	ID          uint64 `gorm:"primaryKey"`
+	UserID      uint64
+	ChallengeID uint64
+	Value       []byte
+}
+
+func (e *goalEntity) fromModel(goal *model.Goal) {
+	e.ID = goal.ID
+	e.ChallengeID = goal.ChallengeID
+	e.UserID = goal.UserID
+	e.Value = goal.Value
+}
+
+func (e goalEntity) toModel() *model.Goal {
+	return &model.Goal{
+		ID:          e.ID,
+		ChallengeID: e.ChallengeID,
+		UserID:      e.UserID,
+		Value:       e.Value,
+	}
+}

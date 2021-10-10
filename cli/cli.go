@@ -12,7 +12,8 @@ import (
 )
 
 var (
-	errExit = errors.New("exit signal")
+	errExit       = errors.New("exit signal")
+	errInvalidCmd = errors.New("invalid command")
 )
 
 var (
@@ -21,11 +22,13 @@ var (
 
 type CLI struct {
 	cHandler logic.ChallengeHandler
+	gHandler logic.GoalHandler
 }
 
 func New(handler logic.Handler) *CLI {
 	return &CLI{
 		cHandler: handler,
+		gHandler: handler,
 	}
 }
 
@@ -46,11 +49,13 @@ func (cli CLI) Process(cmd command, subCmd string) error {
 	switch cmd {
 	case challenge:
 		return cli.challengeCommand(context.Background(), subCmd)
+	case goal:
+		return cli.goalCommand(context.Background(), subCmd)
 	case exit:
 		return errExit
 	}
 
-	return nil
+	return errInvalidCmd
 }
 
 func (cli CLI) challengeCommand(ctx context.Context, subCmd string) error {
@@ -63,7 +68,7 @@ func (cli CLI) challengeCommand(ctx context.Context, subCmd string) error {
 		return cli.joinChallenge(ctx)
 	}
 
-	return nil
+	return errInvalidCmd
 }
 
 func (cli CLI) createChallenge(ctx context.Context) error {
@@ -111,5 +116,38 @@ func (cli CLI) joinChallenge(ctx context.Context) error {
 	log.Println("Joined challenge.")
 
 	return nil
+}
 
+func (cli CLI) goalCommand(ctx context.Context, subCmd string) error {
+	switch subCmd {
+	case "create":
+		return cli.createGoal(ctx)
+	case "find":
+		return cli.findGoal(ctx)
+	}
+	return nil
+}
+
+func (cli CLI) createGoal(ctx context.Context) error {
+	goal := &model.Goal{
+		UserID:      123,
+		ChallengeID: 5,
+		Value:       []byte(`{"weight": 10}`),
+	}
+
+	if err := cli.gHandler.CreateGoal(ctx, goal); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cli CLI) findGoal(ctx context.Context) error {
+	goal, err := cli.gHandler.FindGoal(ctx, 5, 123)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Find goal: %+v\n", *goal)
+	return nil
 }
