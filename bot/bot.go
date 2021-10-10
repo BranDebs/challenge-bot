@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"context"
 	"log"
 	"strings"
 
@@ -42,7 +43,8 @@ func (b *Bot) Listen() error {
 		return err
 	}
 
-	messageHandler := ui.NewMessage()
+	messageHandler := initMessageHandler()
+
 	for update := range updates {
 		if update.Message != nil {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
@@ -61,20 +63,25 @@ func (b *Bot) Listen() error {
 		} else if update.CallbackQuery != nil {
 			text := update.CallbackQuery.Message.Text
 			if strings.Contains(text, "Available Challenges") {
-
-				msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), "")
+				msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, "")
 				msg = messageHandler.JoinChallengeIdMsg(msg, update.CallbackQuery)
 				b.bot.Send(msg)
 
 			} else if strings.Contains(text, "Your Challenges") {
-				msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), "")
+				msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, "")
 				msg = messageHandler.ShowChallengeIdMsg(msg, update.CallbackQuery)
 				b.bot.Send(msg)
 			}
-
 		}
 
 	}
 
 	return nil
+}
+
+func initMessageHandler() ui.Message {
+	ctx := context.Background()
+	keyboardProvider := ui.NewKeyboardProvider()
+	textInfoProvider := ui.NewTextInfoProvider()
+	return ui.NewMessage(ctx, keyboardProvider, textInfoProvider, nil)
 }

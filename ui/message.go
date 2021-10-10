@@ -1,7 +1,11 @@
 package ui
 
 import (
+	"context"
 	"fmt"
+	"strconv"
+
+	"github.com/BranDebs/challenge-bot/logic"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -15,22 +19,43 @@ type Message interface {
 }
 
 type MessageImpl struct {
+	ctx              context.Context
+	keyboardProvider KeyboardProvider
+	textInfoProvider TextInfoProvider
+
+	challengeHandler logic.ChallengeHandler
 }
 
-func NewMessage() Message {
-	return MessageImpl{}
+func NewMessage(
+	ctx context.Context,
+	keyboardProvider KeyboardProvider,
+	textInfoProvider TextInfoProvider,
+	challengeHandler logic.ChallengeHandler,
+) Message {
+	return MessageImpl{
+		ctx:              ctx,
+		keyboardProvider: keyboardProvider,
+		textInfoProvider: textInfoProvider,
+		challengeHandler: challengeHandler,
+	}
 }
 
 func (m MessageImpl) GetMainScreenMsg(msg tgbotapi.MessageConfig) tgbotapi.MessageConfig {
 	msg.Text = "Get started on Challenges =)"
-	msg.ReplyMarkup = getMainChallangePageKeyboard()
+	msg.ReplyMarkup = m.keyboardProvider.StaticMainChallangePageKeyboard()
 	return msg
 }
 
 func (m MessageImpl) GetAvailableChallengesMsg(msg tgbotapi.MessageConfig) tgbotapi.MessageConfig {
 	// TODO: Retrieve available challenges here
-	board := GetChallengesKeyboard(nil)
-	msg.Text = GetChallengesText(nil, All)
+	//_, err := m.challengeHandler.ListChallenges(m.ctx, nil, 0, 100)
+	//if err != nil {
+	//	msg.Text = "Failed to retrieve challenges"
+	//	return msg
+	//}
+
+	board := m.keyboardProvider.GetChallengesKeyboard(nil)
+	msg.Text = m.textInfoProvider.GetChallengesText(nil, All)
 	msg.ParseMode = parseMode
 	msg.ReplyMarkup = board
 	return msg
@@ -38,8 +63,8 @@ func (m MessageImpl) GetAvailableChallengesMsg(msg tgbotapi.MessageConfig) tgbot
 
 func (m MessageImpl) GetUserChallengesMsg(msg tgbotapi.MessageConfig, userID int) tgbotapi.MessageConfig {
 	// TODO: Retrieve user's enrolled challenges here
-	board := GetChallengesKeyboard(nil)
-	msg.Text = GetChallengesText(nil, User)
+	board := m.keyboardProvider.GetChallengesKeyboard(nil)
+	msg.Text = m.textInfoProvider.GetChallengesText(nil, User)
 	msg.ParseMode = parseMode
 	msg.ReplyMarkup = board
 	return msg
@@ -67,6 +92,17 @@ func (m MessageImpl) ShowChallengeIdMsg(msg tgbotapi.MessageConfig, query *tgbot
 	msg.ReplyMarkup = RemoveInlineKeyboard(query.Message.Chat.ID, query.Message.MessageID)
 
 	msg.Text = fmt.Sprintf("userid=%v, challengeid=%v", query.From.ID, query.Data)
-	msg.ReplyMarkup = challengeDashboardPageKeyboard()
+	challengeID, err := strconv.ParseUint(query.Data, 10, 64)
+	if err != nil {
+		msg.Text = fmt.Sprintf("Error parsing challengeID: %v, err:%v", query.Data, err)
+		return msg
+	}
+
+	msg.ReplyMarkup, err = m.keyboardProvider.GetChallengeActionKeyboard(challengeID, uint64(query.From.ID))
+	if err != nil {
+		msg.Text = fmt.Sprintf("Error getting challenge action keyboard, err:%v", err)
+		return msg
+	}
+
 	return msg
 }
