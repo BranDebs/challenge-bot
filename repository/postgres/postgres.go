@@ -46,7 +46,7 @@ func (c *Client) FindChallenge(ctx context.Context, id uint64) (*model.Challenge
 	return nil, nil
 }
 
-func (c *Client) ListChallenges(ctx context.Context, filters repository.Filters, offset, limit uint64) ([]*model.Challenge, error) {
+func (c *Client) ListChallenges(ctx context.Context, filters repository.Filters, offset, limit uint) ([]*model.Challenge, error) {
 	return nil, nil
 }
 
@@ -58,7 +58,7 @@ func (c *Client) FindUser(ctx context.Context, id uint64) (*model.User, error) {
 	return nil, nil
 }
 
-func (c *Client) ListUsers(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*model.User, error) {
+func (c *Client) ListUsers(ctx context.Context, filter repository.Filters, offset, limit uint) ([]*model.User, error) {
 	return nil, nil
 }
 
@@ -70,7 +70,7 @@ func (c *Client) FindGoal(ctx context.Context, id uint64) (*model.Goal, error) {
 	return nil, nil
 }
 
-func (c *Client) ListGoals(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*model.Goal, error) {
+func (c *Client) ListGoals(ctx context.Context, filter repository.Filters, offset, limit uint) ([]*model.Goal, error) {
 	return nil, nil
 }
 
@@ -81,6 +81,6 @@ func (c *Client) FindProgress(ctx context.Context, id uint64) (*model.Progress, 
 	return nil, nil
 }
 
-func (c *Client) ListProgress(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*model.Progress, error) {
+func (c *Client) ListProgress(ctx context.Context, filter repository.Filters, offset, limit uint) ([]*model.Progress, error) {
 	return nil, nil
 }
