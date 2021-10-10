@@ -1,12 +1,13 @@
 package model
 
 type Challenge struct {
-	ID        uint64
-	Name      string
-	UserIDs   []uint64
-	StartDate uint64
-	EndDate   uint64
-	Schema    []byte
+	ID          uint64
+	Name        string
+	UserIDs     []uint64
+	StartDate   uint64
+	EndDate     uint64
+	Description string
+	Schema      []byte
 }
 
 type User struct {
