@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 
-	"github.com/BranDebs/challenge-bot/challenge"
+	"github.com/BranDebs/challenge-bot/model"
 	"github.com/BranDebs/challenge-bot/repository"
 
 	"gorm.io/driver/postgres"
@@ -25,49 +25,49 @@ func New(settings *Settings) repository.Repository {
 	}
 }
 
-func (c *Client) CreateChallenge(ctx context.Context, challenge *challenge.Challenge) error {
+func (c *Client) CreateChallenge(ctx context.Context, challenge *model.Challenge) error {
 	return nil
 }
 
-func (c *Client) FindChallenge(ctx context.Context, id uint64) (*challenge.Challenge, error) {
+func (c *Client) FindChallenge(ctx context.Context, id uint64) (*model.Challenge, error) {
 	return nil, nil
 }
 
-func (c *Client) ListChallenges(ctx context.Context, filters repository.Filters, offset, limit uint64) ([]*challenge.Challenge, error) {
+func (c *Client) ListChallenges(ctx context.Context, filters repository.Filters, offset, limit uint64) ([]*model.Challenge, error) {
 	return nil, nil
 }
 
-func (c *Client) CreateUser(ctx context.Context, user *challenge.User) error {
+func (c *Client) CreateUser(ctx context.Context, user *model.User) error {
 	return nil
 }
 
-func (c *Client) FindUser(ctx context.Context, id uint64) (*challenge.User, error) {
+func (c *Client) FindUser(ctx context.Context, id uint64) (*model.User, error) {
 	return nil, nil
 }
 
-func (c *Client) ListUsers(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*challenge.User, error) {
+func (c *Client) ListUsers(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*model.User, error) {
 	return nil, nil
 }
 
-func (c *Client) CreateGoal(ctx context.Context, goal *challenge.Goal) error {
+func (c *Client) CreateGoal(ctx context.Context, goal *model.Goal) error {
 	return nil
 }
 
-func (c *Client) FindGoal(ctx context.Context, id uint64) (*challenge.Goal, error) {
+func (c *Client) FindGoal(ctx context.Context, id uint64) (*model.Goal, error) {
 	return nil, nil
 }
 
-func (c *Client) ListGoals(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*challenge.Goal, error) {
+func (c *Client) ListGoals(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*model.Goal, error) {
 	return nil, nil
 }
 
-func (c *Client) CreateProgress(ctx context.Context, progress *challenge.Progress) error {
+func (c *Client) CreateProgress(ctx context.Context, progress *model.Progress) error {
 	return nil
 }
-func (c *Client) FindProgress(ctx context.Context, id uint64) (*challenge.Progress, error) {
+func (c *Client) FindProgress(ctx context.Context, id uint64) (*model.Progress, error) {
 	return nil, nil
 }
 
-func (c *Client) ListProgress(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*challenge.Progress, error) {
+func (c *Client) ListProgress(ctx context.Context, filter repository.Filters, offset, limit uint64) ([]*model.Progress, error) {
 	return nil, nil
 }

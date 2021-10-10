@@ -1,4 +1,4 @@
-package challenge
+package model
 
 type Challenge struct {
 	ID        uint64

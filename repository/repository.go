@@ -3,25 +3,25 @@ package repository
 import (
 	"context"
 
-	"github.com/BranDebs/challenge-bot/challenge"
+	"github.com/BranDebs/challenge-bot/model"
 )
 
 type Filters map[string]interface{}
 
 type Repository interface {
-	CreateChallenge(ctx context.Context, challenge *challenge.Challenge) error
-	FindChallenge(ctx context.Context, id uint64) (*challenge.Challenge, error)
-	ListChallenges(ctx context.Context, filters Filters, offset, limit uint64) ([]*challenge.Challenge, error)
+	CreateChallenge(ctx context.Context, challenge *model.Challenge) error
+	FindChallenge(ctx context.Context, id uint64) (*model.Challenge, error)
+	ListChallenges(ctx context.Context, filters Filters, offset, limit uint64) ([]*model.Challenge, error)
 
-	CreateUser(ctx context.Context, user *challenge.User) error
-	FindUser(ctx context.Context, id uint64) (*challenge.User, error)
-	ListUsers(ctx context.Context, filter Filters, offset, limit uint64) ([]*challenge.User, error)
+	CreateUser(ctx context.Context, user *model.User) error
+	FindUser(ctx context.Context, id uint64) (*model.User, error)
+	ListUsers(ctx context.Context, filter Filters, offset, limit uint64) ([]*model.User, error)
 
-	CreateGoal(ctx context.Context, goal *challenge.Goal) error
-	FindGoal(ctx context.Context, id uint64) (*challenge.Goal, error)
-	ListGoals(ctx context.Context, filter Filters, offset, limit uint64) ([]*challenge.Goal, error)
+	CreateGoal(ctx context.Context, goal *model.Goal) error
+	FindGoal(ctx context.Context, id uint64) (*model.Goal, error)
+	ListGoals(ctx context.Context, filter Filters, offset, limit uint64) ([]*model.Goal, error)
 
-	CreateProgress(ctx context.Context, progress *challenge.Progress) error
-	FindProgress(ctx context.Context, id uint64) (*challenge.Progress, error)
-	ListProgress(ctx context.Context, filter Filters, offset, limit uint64) ([]*challenge.Progress, error)
+	CreateProgress(ctx context.Context, progress *model.Progress) error
+	FindProgress(ctx context.Context, id uint64) (*model.Progress, error)
+	ListProgress(ctx context.Context, filter Filters, offset, limit uint64) ([]*model.Progress, error)
 }
