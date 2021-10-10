@@ -2,6 +2,9 @@ package bot
 
 import (
 	"log"
+	"strings"
+
+	"github.com/BranDebs/challenge-bot/ui"
 
 	"github.com/BranDebs/challenge-bot/repository"
 
@@ -39,17 +42,38 @@ func (b *Bot) Listen() error {
 		return err
 	}
 
+	messageHandler := ui.NewMessage()
 	for update := range updates {
-		if update.Message == nil { // ignore any non-Message Updates
-			continue
+		if update.Message != nil {
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+
+			switch update.Message.Text {
+			case ui.StartBot:
+				msg = messageHandler.GetMainScreenMsg(msg)
+			case ui.JoinAChallenge:
+				msg = messageHandler.GetAvailableChallengesMsg(msg)
+			case ui.ViewYourChallenges:
+				msg = messageHandler.GetUserChallengesMsg(msg, update.Message.From.ID)
+			}
+
+			b.bot.Send(msg)
+
+		} else if update.CallbackQuery != nil {
+			text := update.CallbackQuery.Message.Text
+			if strings.Contains(text, "Available Challenges") {
+
+				msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), "")
+				msg = messageHandler.JoinChallengeIdMsg(msg, update.CallbackQuery)
+				b.bot.Send(msg)
+
+			} else if strings.Contains(text, "Your Challenges") {
+				msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), "")
+				msg = messageHandler.ShowChallengeIdMsg(msg, update.CallbackQuery)
+				b.bot.Send(msg)
+			}
+
 		}
 
-		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		msg.ReplyToMessageID = update.Message.MessageID
-
-		b.bot.Send(msg)
 	}
 
 	return nil
