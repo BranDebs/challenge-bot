@@ -7,9 +7,20 @@ import (
 	"github.com/BranDebs/challenge-bot/model"
 )
 
-func GetChallengesText(challenges []model.Challenge, challengeType ChallengeType) string {
+type TextInfoProvider interface {
+	GetChallengesText(challenges []model.Challenge, challengeType ChallengeType) string
+}
+
+type textInfoProvider struct {
+}
+
+func NewTextInfoProvider() TextInfoProvider {
+	return textInfoProvider{}
+}
+
+func (t textInfoProvider) GetChallengesText(challenges []model.Challenge, challengeType ChallengeType) string {
 	challenges = testChallenges
-	challengesText := getChallengeText(challengeType)
+	challengesText := t.getChallengeText(challengeType)
 	for i, challenge := range challenges {
 		x := fmt.Sprintf("*%v\\) %v*\n Description: %v \n StartDate: %v\n EndDate: %v\n\n",
 			i+1,
@@ -30,7 +41,7 @@ func GetChallengesText(challenges []model.Challenge, challengeType ChallengeType
 	return challengesText
 }
 
-func getChallengeText(challengeType ChallengeType) string {
+func (t textInfoProvider) getChallengeText(challengeType ChallengeType) string {
 	switch challengeType {
 	case All:
 		return "*Available Challenges:*\n"

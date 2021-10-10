@@ -7,7 +7,20 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-func getMainChallangePageKeyboard() tgbotapi.ReplyKeyboardMarkup {
+type KeyboardProvider interface {
+	StaticMainChallangePageKeyboard() tgbotapi.ReplyKeyboardMarkup
+	GetChallengesKeyboard(challenges []model.Challenge) tgbotapi.InlineKeyboardMarkup
+}
+
+type KeyboardProviderImpl struct {
+}
+
+func NewKeyboardProvider() KeyboardProvider {
+	return KeyboardProviderImpl{}
+}
+
+// StaticMainChallangePageKeyboard returns the main page keyboard with static fields
+func (k KeyboardProviderImpl) StaticMainChallangePageKeyboard() tgbotapi.ReplyKeyboardMarkup {
 	keyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
 			tgbotapi.NewKeyboardButton(JoinAChallenge),
@@ -17,6 +30,23 @@ func getMainChallangePageKeyboard() tgbotapi.ReplyKeyboardMarkup {
 		),
 	)
 	keyboard.OneTimeKeyboard = true
+	return keyboard
+}
+
+// GetChallengesKeyboard takes in a list of challenges and returns the InlineKeyboardMarkup
+// with the challenge name and a Callback query with the challenge ID (in string).
+func (k KeyboardProviderImpl) GetChallengesKeyboard(challenges []model.Challenge) tgbotapi.InlineKeyboardMarkup {
+	challenges = testChallenges
+	buttons := make([]tgbotapi.InlineKeyboardButton, 0)
+	for _, challenge := range challenges {
+		buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(challenge.Name, strconv.FormatUint(challenge.ID, 10)))
+	}
+	buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(BackKeyword, BackKeyword))
+	keyboard := tgbotapi.InlineKeyboardMarkup{}
+	for _, button := range buttons {
+		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard,
+			tgbotapi.NewInlineKeyboardRow(button))
+	}
 	return keyboard
 }
 
@@ -61,36 +91,6 @@ var testChallenges = []model.Challenge{
 		StartDate:   1633838675,
 		EndDate:     1633839675,
 	},
-}
-
-func GetChallengesKeyboard(challenges []model.Challenge) tgbotapi.InlineKeyboardMarkup {
-	challenges = testChallenges
-	buttons := make([]tgbotapi.InlineKeyboardButton, 0)
-	for _, challenge := range challenges {
-		buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(challenge.Name, strconv.FormatUint(challenge.ID, 10)))
-	}
-	buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(BackKeyword, BackKeyword))
-	keyboard := tgbotapi.InlineKeyboardMarkup{}
-	for _, button := range buttons {
-		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard,
-			tgbotapi.NewInlineKeyboardRow(button))
-	}
-	return keyboard
-}
-
-func GetAvailableChallengesKeyboardA(challenges []model.Challenge) tgbotapi.InlineKeyboardMarkup {
-	challenges = testChallenges
-	buttons := make([]tgbotapi.InlineKeyboardButton, 0)
-	for _, challenge := range challenges {
-		buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(challenge.Name, strconv.FormatUint(challenge.ID, 10)))
-	}
-	buttons = append(buttons, tgbotapi.NewInlineKeyboardButtonData(BackKeyword, BackKeyword))
-	keyboard := tgbotapi.InlineKeyboardMarkup{}
-	for _, button := range buttons {
-		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard,
-			tgbotapi.NewInlineKeyboardRow(button))
-	}
-	return keyboard
 }
 
 func RemoveInlineKeyboard(chatID int64, messageID int) tgbotapi.EditMessageReplyMarkupConfig {
