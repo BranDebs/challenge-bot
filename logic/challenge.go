@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/BranDebs/challenge-bot/common/slices"
 	"github.com/BranDebs/challenge-bot/model"
 	"github.com/BranDebs/challenge-bot/repository"
 )
@@ -52,6 +53,10 @@ func (ch challengeHandler) JoinChallenge(ctx context.Context, challengeID, userI
 	challenge, err := ch.repo.FindChallenge(ctx, challengeID)
 	if err != nil {
 		return err
+	}
+
+	if slices.Uint64Exists(userID, challenge.UserIDs...) {
+		return nil
 	}
 
 	challenge.UserIDs = append(challenge.UserIDs, userID)
