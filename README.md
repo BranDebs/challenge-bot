@@ -2,13 +2,16 @@
 Telegram bot to handle challenges
 
 ## Quick Start
-To run the bot:
+To run the bot in local env:
 ```bash
-# Create the environment
-make env
+# Runs locally challengebot along with the resources.
+make local
+```
 
-# Run challenge binary
-go run main.go
+To run the env only:
+```bash
+# Creates the resources needed like DB, DBA.
+make env
 ```
 
 To clean:

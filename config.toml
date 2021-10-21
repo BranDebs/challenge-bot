@@ -2,7 +2,7 @@
 api_token_path = "apitoken"
 
 [db]
-host = "localhost"
+host = "challenge_db" # change to "localhost" for non docker run in local
 port = 5432
 user = "postgres"
 password = "postgres123"
