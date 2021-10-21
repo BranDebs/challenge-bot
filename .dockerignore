@@ -1,0 +1,15 @@
+# Folders
+.git
+.gitignore
+docs
+
+# Docker related
+Dockerfile
+Dockerfile.dev
+Makefile
+
+# Non source code
+apitoken
+config.toml
+docker-compose.dev.yml
+README.md

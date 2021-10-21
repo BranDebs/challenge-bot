@@ -24,8 +24,8 @@ func New(apiToken string, repo repository.Repository) *Bot {
 		return nil
 	}
 	log.Printf("Authorized on account %s", bot.Self.UserName)
-
 	bot.Debug = true
+
 	return &Bot{
 		bot:  bot,
 		repo: repo,
@@ -42,6 +42,7 @@ func (b *Bot) Listen() error {
 		log.Printf("Unable to get updates.")
 		return err
 	}
+	updates.Clear()
 
 	messageHandler := initMessageHandler()
 
