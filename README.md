@@ -2,16 +2,23 @@
 Telegram bot to handle challenges
 
 ## Quick Start
-To run the bot in local env:
+To run the bot in dev env locally:
 ```bash
 # Runs locally challengebot along with the resources.
-make local
+make dev
 ```
+> Note that there is hot reload when using this mode.
 
 To run the env only:
 ```bash
 # Creates the resources needed like DB, DBA.
 make env
+```
+
+To build the docker image:
+```bash
+# Build docker image with the tag challenge_bot:latest
+make build
 ```
 
 To clean:

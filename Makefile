@@ -1,5 +1,8 @@
-local: env
-	docker-compose -f docker-compose.dev.yml up --detach --build app
+build:
+	docker build -t challenge_bot .
+
+dev: env
+	docker-compose -f docker-compose.dev.yml up --build app
 
 env:
 	docker-compose -f docker-compose.dev.yml up --detach db dba
@@ -7,4 +10,4 @@ env:
 clean:
 	docker-compose -f docker-compose.dev.yml down
 
-.PHONY: local env clean
+.PHONY: build dev env clean

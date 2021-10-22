@@ -2,9 +2,7 @@ version: "3.7"
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: challenge_bot
     ports:
       - 80:80
