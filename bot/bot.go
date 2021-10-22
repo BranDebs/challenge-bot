@@ -63,32 +63,31 @@ func (b *Bot) Listen() error {
 	for update := range updates {
 		if update.Message != nil {
 			log.Printf("%+v", *update.Message)
-			var replyMsg tgbotapi.MessageConfig
+			replyMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 			replyMsg.ParseMode = parseMode
 
 			cmd, err := cmdFactory.GetCommand(
-				model.Msg{
+				model.MsgData{
 					Msg:    update.Message.Text,
 					UserID: uint64(update.Message.From.ID),
 				},
 				l, v)
 			if err != nil {
-				replyMsg = tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
+				replyMsg.Text = err.Error()
 				b.bot.Send(replyMsg)
 				continue
 			}
 
 			replyMsgString, err := cmd.Execute(ctx)
 			if err != nil {
-				replyMsg = tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
+				replyMsg.Text = err.Error()
 				b.bot.Send(replyMsg)
 				continue
 			}
-			replyMsg = tgbotapi.NewMessage(update.Message.Chat.ID, replyMsgString)
+			replyMsg.Text = replyMsgString
 			b.bot.Send(replyMsg)
 		}
 	}
-
 	return nil
 }
 

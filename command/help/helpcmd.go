@@ -3,37 +3,39 @@ package help
 import (
 	"context"
 
-	"github.com/BranDebs/challenge-bot/command"
+	"github.com/BranDebs/challenge-bot/command/util"
+
+	common "github.com/BranDebs/challenge-bot/command/common"
 )
 
 const (
 	helpText = `
-*1. createChallenge* \n
-/createc name description enddate_in_YYYY_MM_DD schema\n
-e.g. /createc 'my challenge name' 'lose fat' 2021-11-25 '{"weight": int64}'\n
+*1. createChallenge*
+/createc name description enddate_in_YYYY_MM_DD schema
+e.g. /createc 'my challenge name' 'lose fat' 2021-11-25 '{"weight": int64}'
 
-*2. listChallenge*\n*
-/listc\n
+*2. listChallenge*
+/listc
 
 *3. challengeDetail*
-/cdetail challengeID\n
-e.g. /cdetail 123\n
+/cdetail challengeID
+e.g. /cdetail 123
 
 *4. joinChallenge*
-/joinc challengeID\n
-e.g. /joinc 123\n
+/joinc challengeID
+e.g. /joinc 123
 
 *5. createGoal*
-/createg challengeID goalSchema\n
-e.g. /createg 123 '{"weight": 50}'\n
+/createg challengeID goalSchema
+e.g. /createg 123 '{"weight": 50}'
 
 *6. goalDetail*
-/gdetail challengeID\n
-e.g. /gdetail 123\n
+/gdetail challengeID
+e.g. /gdetail 123
 
 *7. addProgress*
-/addp challengeID progressSchema\n
-e.g. /addp 123 '{"weight": 51}'\n
+/addp challengeID progressSchema
+e.g. /addp 123 '{"weight": 51}'
 
 *8. listProgress*
 /listp challengeID
@@ -45,9 +47,9 @@ type HelpCommand struct {
 }
 
 func (c HelpCommand) Execute(ctx context.Context) (string, error) {
-	return helpText, nil
+	return util.CleanMarkdownMsg(helpText), nil
 }
 
-func NewHelpCommand() command.Command {
+func NewHelpCommand() common.Command {
 	return &HelpCommand{}
 }

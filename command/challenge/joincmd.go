@@ -3,10 +3,11 @@ package challenge
 import (
 	"context"
 
+	common "github.com/BranDebs/challenge-bot/command/common"
+
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/validator"
 
-	"github.com/BranDebs/challenge-bot/command"
 	"github.com/BranDebs/challenge-bot/command/model"
 )
 
@@ -19,7 +20,7 @@ type JoinChallengeCommand struct {
 	formatter Formatter
 	logic     Logic
 	parser    Parser
-	msg       model.Msg
+	msg       model.MsgData
 }
 
 func (c JoinChallengeCommand) Execute(ctx context.Context) (string, error) {
@@ -28,15 +29,15 @@ func (c JoinChallengeCommand) Execute(ctx context.Context) (string, error) {
 		return err.Error(), err
 	}
 
-	err = c.logic.JoinChallenge(ctx, *params)
+	challengeObj, err := c.logic.JoinChallenge(ctx, *params)
 	if err != nil {
 		return err.Error(), err
 	}
 
-	return c.formatter.FormatJoin(ctx, nil, c.msg.UserID), nil
+	return c.formatter.FormatJoin(ctx, challengeObj, c.msg.UserID), nil
 }
 
-func NewJoinChallengeCommand(msg model.Msg, handler logic.Handler, validator validator.Validator) command.Command {
+func NewJoinChallengeCommand(msg model.MsgData, handler logic.Handler, validator validator.Validator) common.Command {
 	return &JoinChallengeCommand{
 		formatter: NewFormatter(),
 		logic:     NewLogic(handler),

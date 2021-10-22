@@ -1,9 +1,12 @@
 package command
 
 import (
-	"context"
 	"errors"
 	"strings"
+
+	"github.com/BranDebs/challenge-bot/command/goal"
+
+	common "github.com/BranDebs/challenge-bot/command/common"
 
 	"github.com/BranDebs/challenge-bot/command/help"
 
@@ -15,16 +18,13 @@ import (
 	"github.com/BranDebs/challenge-bot/command/model"
 )
 
-type Command interface {
-	Execute(ctx context.Context) (string, error)
-}
-type Invoker func(msg model.Msg, handler logic.Handler, validator validator.Validator) Command
+type Invoker func(msg model.MsgData, handler logic.Handler, validator validator.Validator) common.Command
 
 type Factory struct {
 	invokers []Invoker
 }
 
-func (f Factory) GetCommand(msg model.Msg, handler logic.Handler, validator validator.Validator) (Command, error) {
+func (f Factory) GetCommand(msg model.MsgData, handler logic.Handler, validator validator.Validator) (common.Command, error) {
 	msgTokens := strings.Fields(msg.Msg)
 	if len(msgTokens) == 0 {
 		return nil, errors.New("no command provided")
@@ -40,5 +40,11 @@ func (f Factory) GetCommand(msg model.Msg, handler logic.Handler, validator vali
 }
 
 func NewFactory() *Factory {
-	return &Factory{invokers: []Invoker{challenge.ChallengeCommandInvoker, help.HelpCommandInvoker}}
+	return &Factory{
+		invokers: []Invoker{
+			challenge.ChallengeCommandInvoker,
+			help.HelpCommandInvoker,
+			goal.GoalCommandInvoker,
+		},
+	}
 }

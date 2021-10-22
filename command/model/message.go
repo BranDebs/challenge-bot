@@ -1,6 +1,6 @@
 package model
 
-type Msg struct {
+type MsgData struct {
 	Msg    string
 	UserID uint64
 }

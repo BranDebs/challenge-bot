@@ -3,9 +3,10 @@ package challenge
 import (
 	"context"
 	"errors"
-	"regexp"
 	"strconv"
 	"time"
+
+	"github.com/BranDebs/challenge-bot/command/util"
 
 	"github.com/BranDebs/challenge-bot/validator"
 
@@ -13,20 +14,18 @@ import (
 )
 
 type Parser interface {
-	ParseCreateChallenge(ctx context.Context, msg model.Msg) (*createChallangeParams, error)
-	ParseListChallenges(ctx context.Context, msg model.Msg) (*listChallangeParams, error)
-	ParseFindChallenge(ctx context.Context, msg model.Msg) (*findChallengeParams, error)
-	ParseJoinChallenge(ctx context.Context, msg model.Msg) (*joinChallengeParams, error)
+	ParseCreateChallenge(ctx context.Context, msg model.MsgData) (*createChallangeParams, error)
+	ParseListChallenges(ctx context.Context, msg model.MsgData) (*listChallangeParams, error)
+	ParseFindChallenge(ctx context.Context, msg model.MsgData) (*findChallengeParams, error)
+	ParseJoinChallenge(ctx context.Context, msg model.MsgData) (*joinChallengeParams, error)
 }
 
 const (
-	regexExpr       = `[^\s']+|'([^']*)'`
 	createNumTokens = 5
 	findNumTokens   = 2
 	joinNumTokens   = 2
 	layoutISO       = "2006-01-02"
 
-	invalidTokenCountErr = "number of tokens provided is invalid"
 	invalidDateStringErr = "invalid date string provided"
 )
 
@@ -36,10 +35,10 @@ type parser struct {
 
 // Create challenge format: /createc name description enddate-YYYY-MM-DD schema
 // e.g. /createc 'my challenge name' 'lose fat' 2021-11-11 '{"weight": float}'
-func (p parser) ParseCreateChallenge(ctx context.Context, msg model.Msg) (*createChallangeParams, error) {
-	tokens := p.getTokens(ctx, msg.Msg)
-	if !p.isCorrectNumTokens(tokens, createNumTokens) {
-		return nil, errors.New(invalidTokenCountErr)
+func (p parser) ParseCreateChallenge(ctx context.Context, msg model.MsgData) (*createChallangeParams, error) {
+	tokens := util.GetTokens(msg.Msg)
+	if !util.IsCorrectNumTokens(tokens, createNumTokens) {
+		return nil, errors.New(util.InvalidTokenCountErr)
 	}
 	currTimestamp := uint64(time.Now().Unix())
 
@@ -47,15 +46,16 @@ func (p parser) ParseCreateChallenge(ctx context.Context, msg model.Msg) (*creat
 	description := tokens[2]
 	endDateString := tokens[3]
 	schema := tokens[4]
-	if err := p.validator.ValidateEndDateString(endDateString); err != nil {
-		return nil, err
-	}
+
 	if err := p.validator.ValidateSchemaString(schema); err != nil {
 		return nil, err
 	}
 
 	endDateTimestamp, err := parseDateString(endDateString)
 	if err != nil {
+		return nil, err
+	}
+	if err := p.validator.ValidateEndDateString(currTimestamp, endDateTimestamp); err != nil {
 		return nil, err
 	}
 
@@ -79,20 +79,20 @@ func parseDateString(date string) (uint64, error) {
 
 // List challenge format: /listc
 // e.g. /listc
-func (p parser) ParseListChallenges(ctx context.Context, msg model.Msg) (*listChallangeParams, error) {
+func (p parser) ParseListChallenges(ctx context.Context, msg model.MsgData) (*listChallangeParams, error) {
 	return &listChallangeParams{userID: msg.UserID}, nil
 }
 
 // Find challenge format: /cdetail challengeID
 // e.g. /cdetail 123
-func (p parser) ParseFindChallenge(ctx context.Context, msg model.Msg) (*findChallengeParams, error) {
-	tokens := p.getTokens(ctx, msg.Msg)
-	if !p.isCorrectNumTokens(tokens, findNumTokens) {
-		return nil, errors.New(invalidTokenCountErr)
+func (p parser) ParseFindChallenge(ctx context.Context, msg model.MsgData) (*findChallengeParams, error) {
+	tokens := util.GetTokens(msg.Msg)
+	if !util.IsCorrectNumTokens(tokens, findNumTokens) {
+		return nil, errors.New(util.InvalidTokenCountErr)
 	}
 
 	challengeIDString := tokens[1]
-	if err := p.validator.ValidateChallengeID(challengeIDString); err != nil {
+	if err := p.validator.ValidateID(challengeIDString); err != nil {
 		return nil, err
 	}
 
@@ -105,14 +105,14 @@ func (p parser) ParseFindChallenge(ctx context.Context, msg model.Msg) (*findCha
 
 // Join challenge format: /joinc challengeID
 // e.g. /joinc 123
-func (p parser) ParseJoinChallenge(ctx context.Context, msg model.Msg) (*joinChallengeParams, error) {
-	tokens := p.getTokens(ctx, msg.Msg)
-	if !p.isCorrectNumTokens(tokens, joinNumTokens) {
-		return nil, errors.New(invalidTokenCountErr)
+func (p parser) ParseJoinChallenge(ctx context.Context, msg model.MsgData) (*joinChallengeParams, error) {
+	tokens := util.GetTokens(msg.Msg)
+	if !util.IsCorrectNumTokens(tokens, joinNumTokens) {
+		return nil, errors.New(util.InvalidTokenCountErr)
 	}
 
 	challengeIDString := tokens[1]
-	if err := p.validator.ValidateChallengeID(challengeIDString); err != nil {
+	if err := p.validator.ValidateID(challengeIDString); err != nil {
 		return nil, err
 	}
 
@@ -122,14 +122,6 @@ func (p parser) ParseJoinChallenge(ctx context.Context, msg model.Msg) (*joinCha
 		challengeID: challengeID,
 		userID:      msg.UserID,
 	}, nil
-}
-
-func (p parser) isCorrectNumTokens(tokens []string, numTokens int) bool {
-	return len(tokens) == numTokens
-}
-func (p parser) getTokens(ctx context.Context, msg string) []string {
-	regExp := regexp.MustCompile(regexExpr)
-	return regExp.FindAllString(msg, -1)
 }
 
 func NewParser(validator validator.Validator) Parser {

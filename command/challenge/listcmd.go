@@ -3,10 +3,11 @@ package challenge
 import (
 	"context"
 
+	common "github.com/BranDebs/challenge-bot/command/common"
+
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/validator"
 
-	"github.com/BranDebs/challenge-bot/command"
 	"github.com/BranDebs/challenge-bot/command/model"
 )
 
@@ -18,7 +19,7 @@ type ListChallengeCommand struct {
 	formatter Formatter
 	logic     Logic
 	parser    Parser
-	msg       model.Msg
+	msg       model.MsgData
 }
 
 func (c ListChallengeCommand) Execute(ctx context.Context) (string, error) {
@@ -35,7 +36,7 @@ func (c ListChallengeCommand) Execute(ctx context.Context) (string, error) {
 	return c.formatter.FormatList(ctx, challengesObj, c.msg.UserID), nil
 }
 
-func NewListChallengeCommand(msg model.Msg, handler logic.Handler, validator validator.Validator) command.Command {
+func NewListChallengeCommand(msg model.MsgData, handler logic.Handler, validator validator.Validator) common.Command {
 	return &ListChallengeCommand{
 		formatter: NewFormatter(),
 		logic:     NewLogic(handler),

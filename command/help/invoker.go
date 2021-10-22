@@ -3,7 +3,8 @@ package help
 import (
 	"strings"
 
-	"github.com/BranDebs/challenge-bot/command"
+	common "github.com/BranDebs/challenge-bot/command/common"
+
 	"github.com/BranDebs/challenge-bot/command/model"
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/validator"
@@ -23,7 +24,7 @@ func (c helpCommand) String() string {
 	return ""
 }
 
-func HelpCommandInvoker(msg model.Msg, handler logic.Handler, validator validator.Validator) command.Command {
+func HelpCommandInvoker(msg model.MsgData, handler logic.Handler, validator validator.Validator) common.Command {
 	msgTokens := strings.Fields(msg.Msg)
 	switch msgTokens[0] {
 	case help.String():
