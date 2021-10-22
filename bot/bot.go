@@ -3,7 +3,13 @@ package bot
 import (
 	"context"
 	"log"
-	"strings"
+
+	"github.com/BranDebs/challenge-bot/command"
+	"github.com/BranDebs/challenge-bot/command/model"
+
+	"github.com/BranDebs/challenge-bot/validator"
+
+	"github.com/BranDebs/challenge-bot/logic"
 
 	"github.com/BranDebs/challenge-bot/ui"
 
@@ -16,6 +22,10 @@ type Bot struct {
 	bot  *tgbotapi.BotAPI
 	repo repository.Repository
 }
+
+const (
+	parseMode = "MarkdownV2"
+)
 
 func New(apiToken string, repo repository.Repository) *Bot {
 	bot, err := tgbotapi.NewBotAPI(apiToken)
@@ -43,45 +53,48 @@ func (b *Bot) Listen() error {
 		return err
 	}
 
-	messageHandler := initMessageHandler()
+	ctx := context.Background()
+
+	l := logic.New(b.repo)
+	v := validator.NewValidator()
+	cmdFactory := command.NewFactory()
 
 	for update := range updates {
 		if update.Message != nil {
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+			log.Printf("%+v", *update.Message)
+			var replyMsg tgbotapi.MessageConfig
+			replyMsg.ParseMode = parseMode
 
-			switch update.Message.Text {
-			case ui.StartBot:
-				msg = messageHandler.GetMainScreenMsg(msg)
-			case ui.JoinAChallenge:
-				msg = messageHandler.GetAvailableChallengesMsg(msg)
-			case ui.ViewYourChallenges:
-				msg = messageHandler.GetUserChallengesMsg(msg, update.Message.From.ID)
+			cmd, err := cmdFactory.GetCommand(
+				model.Msg{
+					Msg:    update.Message.Text,
+					UserID: uint64(update.Message.From.ID),
+				},
+				l, v)
+			if err != nil {
+				replyMsg = tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
+				b.bot.Send(replyMsg)
+				continue
 			}
 
-			b.bot.Send(msg)
-
-		} else if update.CallbackQuery != nil {
-			text := update.CallbackQuery.Message.Text
-			if strings.Contains(text, "Available Challenges") {
-				msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, "")
-				msg = messageHandler.JoinChallengeIdMsg(msg, update.CallbackQuery)
-				b.bot.Send(msg)
-
-			} else if strings.Contains(text, "Your Challenges") {
-				msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, "")
-				msg = messageHandler.ShowChallengeIdMsg(msg, update.CallbackQuery)
-				b.bot.Send(msg)
+			replyMsgString, err := cmd.Execute(ctx)
+			if err != nil {
+				replyMsg = tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
+				b.bot.Send(replyMsg)
+				continue
 			}
+			replyMsg = tgbotapi.NewMessage(update.Message.Chat.ID, replyMsgString)
+			b.bot.Send(replyMsg)
 		}
-
 	}
 
 	return nil
 }
 
-func initMessageHandler() ui.Message {
+func (b *Bot) initMessageHandler() ui.Message {
+	handler := logic.New(b.repo)
 	ctx := context.Background()
 	keyboardProvider := ui.NewKeyboardProvider()
 	textInfoProvider := ui.NewTextInfoProvider()
-	return ui.NewMessage(ctx, keyboardProvider, textInfoProvider, nil)
+	return ui.NewMessage(ctx, keyboardProvider, textInfoProvider, handler)
 }

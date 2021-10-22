@@ -8,7 +8,7 @@ import (
 )
 
 type TextInfoProvider interface {
-	GetChallengesText(challenges []model.Challenge, challengeType ChallengeType) string
+	GetChallengesText(challenges []*model.Challenge, challengeType ChallengeType) string
 }
 
 type textInfoProvider struct {
@@ -18,8 +18,7 @@ func NewTextInfoProvider() TextInfoProvider {
 	return textInfoProvider{}
 }
 
-func (t textInfoProvider) GetChallengesText(challenges []model.Challenge, challengeType ChallengeType) string {
-	challenges = testChallenges
+func (t textInfoProvider) GetChallengesText(challenges []*model.Challenge, challengeType ChallengeType) string {
 	challengesText := t.getChallengeText(challengeType)
 	for i, challenge := range challenges {
 		x := fmt.Sprintf("*%v\\) %v*\n Description: %v \n StartDate: %v\n EndDate: %v\n\n",

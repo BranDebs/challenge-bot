@@ -15,6 +15,8 @@ const (
 
 	BackKeyword = "back"
 	parseMode   = "MarkdownV2"
+
+	GetStartedOnChallengesMsg = "Get started on Challenges =)"
 )
 
 type ChallengeType int64

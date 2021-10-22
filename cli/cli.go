@@ -79,20 +79,22 @@ func (cli CLI) challengeCommand(ctx context.Context, subCmd string) error {
 
 func (cli CLI) createChallenge(ctx context.Context) error {
 	var (
-		name   = "test challenge"
-		userID = uint64(123)
-		schema = `{"weight": "int64"}`
+		name        = "test challenge"
+		userID      = uint64(123)
+		schema      = `{"weight": "int64"}`
+		description = ""
 	)
 
 	currentDate := time.Now()
 	endDate := currentDate.Add(24 * time.Hour)
 
 	challenge := &model.Challenge{
-		Name:      name,
-		UserIDs:   []uint64{uint64(userID)},
-		StartDate: uint64(currentDate.Unix()),
-		EndDate:   uint64(endDate.Unix()),
-		Schema:    []byte(schema),
+		Name:        name,
+		UserIDs:     []uint64{uint64(userID)},
+		StartDate:   uint64(currentDate.Unix()),
+		EndDate:     uint64(endDate.Unix()),
+		Schema:      []byte(schema),
+		Description: description,
 	}
 
 	log.Printf("Challenge created: %v", challenge)

@@ -23,39 +23,42 @@ type MessageImpl struct {
 	keyboardProvider KeyboardProvider
 	textInfoProvider TextInfoProvider
 
-	challengeHandler logic.ChallengeHandler
+	logicHandler logic.Handler
 }
 
 func NewMessage(
 	ctx context.Context,
 	keyboardProvider KeyboardProvider,
 	textInfoProvider TextInfoProvider,
-	challengeHandler logic.ChallengeHandler,
+	logicHandler logic.Handler,
 ) Message {
 	return MessageImpl{
 		ctx:              ctx,
 		keyboardProvider: keyboardProvider,
 		textInfoProvider: textInfoProvider,
-		challengeHandler: challengeHandler,
+		logicHandler:     logicHandler,
 	}
 }
 
 func (m MessageImpl) GetMainScreenMsg(msg tgbotapi.MessageConfig) tgbotapi.MessageConfig {
-	msg.Text = "Get started on Challenges =)"
-	msg.ReplyMarkup = m.keyboardProvider.StaticMainChallangePageKeyboard()
+	msg.Text = GetStartedOnChallengesMsg
+	msg.ReplyMarkup = m.keyboardProvider.StaticMainChallengePageKeyboard()
 	return msg
 }
 
 func (m MessageImpl) GetAvailableChallengesMsg(msg tgbotapi.MessageConfig) tgbotapi.MessageConfig {
-	// TODO: Retrieve available challenges here
-	//_, err := m.challengeHandler.ListChallenges(m.ctx, nil, 0, 100)
-	//if err != nil {
-	//	msg.Text = "Failed to retrieve challenges"
-	//	return msg
-	//}
+	challenges, err := m.logicHandler.ListChallenges(m.ctx)
+	if err != nil {
+		msg.Text = "Failed to retrieve challenges"
+		return msg
+	}
+	if len(challenges) == 0 {
+		msg.Text = "No challenges available"
+		return msg
+	}
 
-	board := m.keyboardProvider.GetChallengesKeyboard(nil)
-	msg.Text = m.textInfoProvider.GetChallengesText(nil, All)
+	board := m.keyboardProvider.GetChallengesKeyboard(challenges)
+	msg.Text = m.textInfoProvider.GetChallengesText(challenges, All)
 	msg.ParseMode = parseMode
 	msg.ReplyMarkup = board
 	return msg
@@ -76,9 +79,17 @@ func (m MessageImpl) JoinChallengeIdMsg(msg tgbotapi.MessageConfig, query *tgbot
 	}
 
 	msg.ReplyMarkup = RemoveInlineKeyboard(query.Message.Chat.ID, query.Message.MessageID)
+	_, err := strconv.ParseUint(query.Data, 10, 64)
+	if err != nil {
+		msg.Text = fmt.Sprintf("Error parsing challengeID: %v, err:%v", query.Data, err)
+		return msg
+	}
+	msg.ReplyMarkup = tgbotapi.ForceReply{
+		ForceReply: true,
+	}
 
-	msg.Text = "*bold \\*text*\n_italic \\*text_\n__underline__\n~strikethrough~\n*bold _italic bold ~italic bold strikethrough~ __underline italic bold___ bold*\n[inline URL](http://www.example.com/)\n[inline mention of a user](tg://user?id=123456789)\n`inline fixed-width code`\n```\npre-formatted fixed-width code block\n```\n```python\npre-formatted fixed-width code block written in the Python programming language\n```"
-	msg.Text = msg.Text + query.Data
+	msg.Text = fmt.Sprintf(
+		"Create a goal for yourself in this Challenge\nInput target:")
 
 	msg.ParseMode = parseMode
 	return msg
