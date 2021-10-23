@@ -28,7 +28,7 @@ func New(settings *Settings) repository.Repository {
 	}
 }
 
-func (c *Client) CreateChallenge(ctx context.Context, challenge *model.Challenge) error {
+func (c *Client) CreateChallenge(ctx context.Context, challenge *model.Challenge) (*model.Challenge, error) {
 	var e challengeEntity
 	e.fromModel(challenge)
 
@@ -36,10 +36,10 @@ func (c *Client) CreateChallenge(ctx context.Context, challenge *model.Challenge
 
 	res := c.db.Create(&e)
 	if res.Error != nil {
-		return res.Error
+		return nil, res.Error
 	}
 
-	return nil
+	return e.toModel(), nil
 }
 
 func (c *Client) FindChallenge(ctx context.Context, id uint64) (*model.Challenge, error) {
@@ -89,8 +89,8 @@ func (c *Client) UpdateChallenge(ctx context.Context, challenge *model.Challenge
 	return nil
 }
 
-func (c *Client) CreateUser(ctx context.Context, user *model.User) error {
-	return nil
+func (c *Client) CreateUser(ctx context.Context, user *model.User) (*model.User, error) {
+	return nil, nil
 }
 
 func (c *Client) FindUser(ctx context.Context, id uint64) (*model.User, error) {
@@ -101,7 +101,7 @@ func (c *Client) ListUsers(ctx context.Context, filter repository.Filters, offse
 	return nil, nil
 }
 
-func (c *Client) CreateGoal(ctx context.Context, goal *model.Goal) error {
+func (c *Client) CreateGoal(ctx context.Context, goal *model.Goal) (*model.Goal, error) {
 	var e goalEntity
 	e.fromModel(goal)
 
@@ -109,10 +109,10 @@ func (c *Client) CreateGoal(ctx context.Context, goal *model.Goal) error {
 
 	res := c.db.Create(&e)
 	if res.Error != nil {
-		return res.Error
+		return nil, res.Error
 	}
 
-	return nil
+	return e.toModel(), nil
 }
 
 func (c *Client) FindGoal(ctx context.Context, id uint64) (*model.Goal, error) {
@@ -149,7 +149,7 @@ func (c *Client) ListGoals(ctx context.Context, filters repository.Filters, offs
 	return goals, nil
 }
 
-func (c *Client) CreateProgress(ctx context.Context, progress *model.Progress) error {
+func (c *Client) CreateProgress(ctx context.Context, progress *model.Progress) (*model.Progress, error) {
 	var e progressEntity
 
 	e.fromModel(progress)
@@ -158,10 +158,10 @@ func (c *Client) CreateProgress(ctx context.Context, progress *model.Progress) e
 
 	res := c.db.Create(&e)
 	if res.Error != nil {
-		return res.Error
+		return nil, res.Error
 	}
 
-	return nil
+	return e.toModel(), nil
 }
 func (c *Client) FindProgress(ctx context.Context, id uint64) (*model.Progress, error) {
 	var e progressEntity

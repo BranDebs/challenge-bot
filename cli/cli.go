@@ -99,7 +99,12 @@ func (cli CLI) createChallenge(ctx context.Context) error {
 
 	log.Printf("Challenge created: %v", challenge)
 
-	return cli.cHandler.CreateChallenge(ctx, challenge)
+	_, err := cli.cHandler.CreateChallenge(ctx, challenge)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (cli CLI) listChallenges(ctx context.Context) error {
@@ -154,7 +159,8 @@ func (cli CLI) createGoal(ctx context.Context) error {
 		Value:       []byte(`{"weight": 10}`),
 	}
 
-	if err := cli.gHandler.CreateGoal(ctx, goal); err != nil {
+	_, err := cli.gHandler.CreateGoal(ctx, goal)
+	if err != nil {
 		return err
 	}
 
@@ -189,7 +195,7 @@ func (cli CLI) createProgress(ctx context.Context) error {
 		Date:        uint64(time.Now().Unix()),
 	}
 
-	completed, err := cli.pHandler.CreateProgress(ctx, progress)
+	_, completed, err := cli.pHandler.CreateProgress(ctx, progress)
 	if err != nil {
 		return err
 	}

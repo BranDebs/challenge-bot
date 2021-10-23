@@ -16,7 +16,7 @@ var (
 )
 
 type ChallengeHandler interface {
-	CreateChallenge(ctx context.Context, challenge *model.Challenge) error
+	CreateChallenge(ctx context.Context, challenge *model.Challenge) (*model.Challenge, error)
 	ListChallenges(ctx context.Context) ([]*model.Challenge, error)
 	FindChallenge(ctx context.Context, id uint64) (*model.Challenge, error)
 	JoinChallenge(ctx context.Context, challengeID, userID uint64) error
@@ -26,17 +26,18 @@ type challengeHandler struct {
 	repo repository.Challenge
 }
 
-func (ch challengeHandler) CreateChallenge(ctx context.Context, challenge *model.Challenge) error {
+func (ch challengeHandler) CreateChallenge(ctx context.Context, challenge *model.Challenge) (*model.Challenge, error) {
 	if challenge == nil {
-		return fmt.Errorf("%w: %+v", ErrInvalidChallenge, challenge)
+		return nil, fmt.Errorf("%w: %+v", ErrInvalidChallenge, challenge)
 	}
 	log.Printf("Creating challenge: %+v", challenge)
 
-	if err := ch.repo.CreateChallenge(ctx, challenge); err != nil {
-		return err
+	c, err := ch.repo.CreateChallenge(ctx, challenge)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return c, nil
 }
 
 func (ch challengeHandler) ListChallenges(ctx context.Context) ([]*model.Challenge, error) {

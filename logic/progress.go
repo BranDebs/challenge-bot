@@ -18,7 +18,7 @@ var (
 )
 
 type ProgressHandler interface {
-	CreateProgress(ctx context.Context, progress *model.Progress) (bool, error)
+	CreateProgress(ctx context.Context, progress *model.Progress) (*model.Progress, bool, error)
 	ListProgress(ctx context.Context, challengeID, userID uint64) ([]*model.Progress, error)
 }
 
@@ -28,13 +28,14 @@ type progressHandler struct {
 	gRepo repository.Goal
 }
 
-func (ph progressHandler) CreateProgress(ctx context.Context, progress *model.Progress) (bool, error) {
+func (ph progressHandler) CreateProgress(ctx context.Context, progress *model.Progress) (*model.Progress, bool, error) {
 	if progress == nil {
-		return false, fmt.Errorf("%w: %v", ErrInvalidProgress, progress)
+		return nil, false, fmt.Errorf("%w: %v", ErrInvalidProgress, progress)
 	}
 
-	if err := ph.pRepo.CreateProgress(ctx, progress); err != nil {
-		return false, nil
+	p, err := ph.pRepo.CreateProgress(ctx, progress)
+	if err != nil {
+		return nil, false, nil
 	}
 
 	// Check if we met goal criteria
@@ -45,24 +46,24 @@ func (ph progressHandler) CreateProgress(ctx context.Context, progress *model.Pr
 
 	goals, err := ph.gRepo.ListGoals(ctx, filters, repository.DefaultOffset, repository.DefaultLimit)
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 
 	if len(goals) > 1 {
-		return false, ErrInvalidGoal
+		return nil, false, ErrInvalidGoal
 	}
 
 	challenge, err := ph.cRepo.FindChallenge(ctx, goals[0].ChallengeID)
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 
 	completed, err := completeChallenge(challenge.Schema, goals[0].Value, progress.Value)
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 
-	return completed, nil
+	return p, completed, nil
 }
 
 func (ph progressHandler) ListProgress(ctx context.Context, challengeID, userID uint64) ([]*model.Progress, error) {

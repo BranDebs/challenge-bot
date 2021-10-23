@@ -22,7 +22,7 @@ type progressLogic struct {
 }
 
 func (p progressLogic) AddProgress(ctx context.Context, params addProgressParams) error {
-	isSuccess, err := p.pHandler.CreateProgress(ctx, &model.Progress{
+	_, isSuccess, err := p.pHandler.CreateProgress(ctx, &model.Progress{
 		UserID:      params.userID,
 		ChallengeID: params.challengeID,
 		Value:       params.schema,

@@ -15,7 +15,7 @@ var (
 )
 
 type GoalHandler interface {
-	CreateGoal(ctx context.Context, goal *model.Goal) error
+	CreateGoal(ctx context.Context, goal *model.Goal) (*model.Goal, error)
 	FindGoal(ctx context.Context, challengeID, userID uint64) (*model.Goal, error)
 }
 
@@ -23,9 +23,9 @@ type goalHandler struct {
 	repo repository.Goal
 }
 
-func (gh goalHandler) CreateGoal(ctx context.Context, goal *model.Goal) error {
+func (gh goalHandler) CreateGoal(ctx context.Context, goal *model.Goal) (*model.Goal, error) {
 	if goal == nil {
-		return fmt.Errorf("%w: %+v", ErrInvalidGoal, goal)
+		return nil, fmt.Errorf("%w: %+v", ErrInvalidGoal, goal)
 	}
 
 	filters := repository.Filters{
@@ -35,18 +35,19 @@ func (gh goalHandler) CreateGoal(ctx context.Context, goal *model.Goal) error {
 
 	goals, err := gh.repo.ListGoals(ctx, filters, repository.DefaultOffset, repository.DefaultLimit)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if len(goals) > 0 {
-		return ErrGoalExists
+		return nil, ErrGoalExists
 	}
 
-	if err := gh.repo.CreateGoal(ctx, goal); err != nil {
-		return err
+	g, err := gh.repo.CreateGoal(ctx, goal)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return g, nil
 }
 
 func (gh goalHandler) FindGoal(ctx context.Context, challengeID, userID uint64) (*model.Goal, error) {

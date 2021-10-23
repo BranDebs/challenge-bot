@@ -23,8 +23,12 @@ func (g goalLogic) CreateGoal(ctx context.Context, params createGoalParams) (*mo
 		ChallengeID: params.challengeID,
 		Value:       params.schema,
 	}
-	err := g.gHandler.CreateGoal(ctx, goalObj)
-	return goalObj, err
+	goal, err := g.gHandler.CreateGoal(ctx, goalObj)
+	if err != nil {
+		return nil, err
+	}
+
+	return goal, nil
 }
 
 func (g goalLogic) FindGoal(ctx context.Context, params findGoalParams) (*model.Goal, error) {

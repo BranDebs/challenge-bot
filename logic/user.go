@@ -7,6 +7,6 @@ import (
 )
 
 type UserHandler interface {
-	RegisterUser(ctx context.Context, user *model.User) error
+	RegisterUser(ctx context.Context, user *model.User) (*model.User, error)
 	ListChallenges(ctx context.Context, userIDs ...uint64) ([]*model.Challenge, error)
 }

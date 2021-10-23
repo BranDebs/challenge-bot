@@ -27,13 +27,13 @@ func (l challengeLogic) CreateChallenge(ctx context.Context, params createChalla
 		Description: params.description,
 		Schema:      params.schema,
 	}
-	err := l.cHandler.CreateChallenge(ctx, challengeStruct)
+	challenge, err := l.cHandler.CreateChallenge(ctx, challengeStruct)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: Return struct
-	return challengeStruct, nil
+	return challenge, nil
 }
 
 func (l challengeLogic) ListChallenges(ctx context.Context, params listChallangeParams) ([]*model.Challenge, error) {
