@@ -3,8 +3,7 @@ package goal
 import (
 	"context"
 
-	"github.com/BranDebs/challenge-bot/command/common"
-	"github.com/BranDebs/challenge-bot/command/model"
+	"github.com/BranDebs/challenge-bot/command/base"
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/validator"
 )
@@ -19,7 +18,7 @@ type CreateGoalCommand struct {
 	formatter Formatter
 	logic     Logic
 	parser    Parser
-	msg       model.MsgData
+	msg       base.MsgData
 }
 
 func (c CreateGoalCommand) Execute(ctx context.Context) (string, error) {
@@ -36,7 +35,7 @@ func (c CreateGoalCommand) Execute(ctx context.Context) (string, error) {
 	return c.formatter.FormatCreate(ctx, goalObj), nil
 }
 
-func NewCreateGoalCommand(msg model.MsgData, handler logic.Handler, validator validator.Validator) common.Command {
+func NewCreateGoalCommand(msg base.MsgData, handler logic.Handler, validator validator.Validator) base.Command {
 	return &CreateGoalCommand{
 		formatter: NewFormatter(),
 		logic:     NewLogic(handler),

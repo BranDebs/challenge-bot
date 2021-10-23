@@ -3,8 +3,7 @@ package goal
 import (
 	"strings"
 
-	"github.com/BranDebs/challenge-bot/command/common"
-	"github.com/BranDebs/challenge-bot/command/model"
+	"github.com/BranDebs/challenge-bot/command/base"
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/validator"
 )
@@ -26,7 +25,7 @@ func (c goalCommand) String() string {
 	return ""
 }
 
-func GoalCommandInvoker(msg model.MsgData, handler logic.Handler, validator validator.Validator) common.Command {
+func GoalCommandInvoker(msg base.MsgData, handler logic.Handler, validator validator.Validator) base.Command {
 	msgTokens := strings.Fields(msg.Msg)
 	switch msgTokens[0] {
 	case create.String():

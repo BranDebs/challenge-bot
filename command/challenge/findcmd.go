@@ -3,12 +3,10 @@ package challenge
 import (
 	"context"
 
-	common "github.com/BranDebs/challenge-bot/command/common"
-
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/validator"
 
-	"github.com/BranDebs/challenge-bot/command/model"
+	"github.com/BranDebs/challenge-bot/command/base"
 )
 
 type findChallengeParams struct {
@@ -19,7 +17,7 @@ type FindChallengeCommand struct {
 	formatter Formatter
 	logic     Logic
 	parser    Parser
-	msg       model.MsgData
+	msg       base.MsgData
 }
 
 func (c FindChallengeCommand) Execute(ctx context.Context) (string, error) {
@@ -36,7 +34,7 @@ func (c FindChallengeCommand) Execute(ctx context.Context) (string, error) {
 	return c.formatter.FormatFind(ctx, challengeObj, c.msg.UserID), nil
 }
 
-func NewFindChallengeCommand(msg model.MsgData, handler logic.Handler, validator validator.Validator) common.Command {
+func NewFindChallengeCommand(msg base.MsgData, handler logic.Handler, validator validator.Validator) base.Command {
 	return &FindChallengeCommand{
 		formatter: NewFormatter(),
 		logic:     NewLogic(handler),

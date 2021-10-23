@@ -3,12 +3,10 @@ package challenge
 import (
 	"strings"
 
-	common "github.com/BranDebs/challenge-bot/command/common"
-
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/validator"
 
-	"github.com/BranDebs/challenge-bot/command/model"
+	"github.com/BranDebs/challenge-bot/command/base"
 )
 
 type challengeCommand uint
@@ -34,7 +32,7 @@ func (c challengeCommand) String() string {
 	return ""
 }
 
-func ChallengeCommandInvoker(msg model.MsgData, handler logic.Handler, validator validator.Validator) common.Command {
+func ChallengeCommandInvoker(msg base.MsgData, handler logic.Handler, validator validator.Validator) base.Command {
 	msgTokens := strings.Fields(msg.Msg)
 	switch msgTokens[0] {
 	case create.String():

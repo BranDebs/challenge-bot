@@ -12,12 +12,18 @@ type Validator interface {
 	ValidateID(id string) error
 }
 
+var (
+	ErrInvalidEndTimestamp = errors.New("end date cannot be earlier than current date")
+	ErrInvalidJsonFormat   = errors.New("schema provided is not in json format")
+	ErrInvalidIDFormat     = errors.New("invalid ID format, ID should be a positive integer")
+)
+
 type validator struct {
 }
 
 func (v validator) ValidateEndDateString(startTimestamp uint64, endTimestamp uint64) error {
 	if endTimestamp <= startTimestamp {
-		return errors.New("end date cannot be earlier than current date")
+		return ErrInvalidEndTimestamp
 	}
 	return nil
 }
@@ -25,7 +31,7 @@ func (v validator) ValidateEndDateString(startTimestamp uint64, endTimestamp uin
 // TODO Deb
 func (v validator) ValidateSchemaString(schemaString string) error {
 	if !v.isJSON(schemaString) {
-		return errors.New("schema provided is not in json format")
+		return ErrInvalidJsonFormat
 	}
 	return nil
 }
@@ -37,7 +43,10 @@ func (v validator) isJSON(str string) bool {
 
 func (v validator) ValidateID(id string) error {
 	_, err := strconv.ParseUint(id, 10, 64)
-	return err
+	if err != nil {
+		return ErrInvalidIDFormat
+	}
+	return nil
 }
 
 func NewValidator() Validator {

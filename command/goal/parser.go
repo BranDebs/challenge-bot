@@ -2,23 +2,21 @@ package goal
 
 import (
 	"context"
-	"errors"
 	"strconv"
-
-	"github.com/BranDebs/challenge-bot/command/util"
 
 	"github.com/BranDebs/challenge-bot/validator"
 
-	"github.com/BranDebs/challenge-bot/command/model"
+	"github.com/BranDebs/challenge-bot/command/base"
 )
 
 type Parser interface {
-	ParseCreateGoal(ctx context.Context, msg model.MsgData) (*createGoalParams, error)
-	ParseFindGoal(ctx context.Context, msg model.MsgData) (*findGoalParams, error)
+	ParseCreateGoal(ctx context.Context, msg base.MsgData) (*createGoalParams, error)
+	ParseFindGoal(ctx context.Context, msg base.MsgData) (*findGoalParams, error)
 }
 
 const (
 	createNumTokens = 3
+	findNumTokens   = 2
 )
 
 type parser struct {
@@ -27,15 +25,18 @@ type parser struct {
 
 // Create goal format: /createg challengeID goalSchema
 // e.g. /createg 123 {“weight”: 50}
-func (p parser) ParseCreateGoal(ctx context.Context, msg model.MsgData) (*createGoalParams, error) {
-	tokens := util.GetTokens(msg.Msg)
-	if !util.IsCorrectNumTokens(tokens, createNumTokens) {
-		return nil, errors.New(util.InvalidTokenCountErr)
+func (p parser) ParseCreateGoal(ctx context.Context, msg base.MsgData) (*createGoalParams, error) {
+	tokens := base.GetTokens(msg.Msg)
+	if !base.IsCorrectNumTokens(tokens, createNumTokens) {
+		return nil, base.ErrInvalidTokenCount
 	}
 
 	challengeIDString := tokens[1]
 	goalSchemaString := tokens[2]
 	if err := p.validator.ValidateID(challengeIDString); err != nil {
+		return nil, err
+	}
+	if err := p.validator.ValidateSchemaString(goalSchemaString); err != nil {
 		return nil, err
 	}
 
@@ -50,10 +51,10 @@ func (p parser) ParseCreateGoal(ctx context.Context, msg model.MsgData) (*create
 
 // Find goal format: /gdetail challengeID
 // e.g. /gdetail 123
-func (p parser) ParseFindGoal(ctx context.Context, msg model.MsgData) (*findGoalParams, error) {
-	tokens := util.GetTokens(msg.Msg)
-	if !util.IsCorrectNumTokens(tokens, createNumTokens) {
-		return nil, errors.New(util.InvalidTokenCountErr)
+func (p parser) ParseFindGoal(ctx context.Context, msg base.MsgData) (*findGoalParams, error) {
+	tokens := base.GetTokens(msg.Msg)
+	if !base.IsCorrectNumTokens(tokens, findNumTokens) {
+		return nil, base.ErrInvalidTokenCount
 	}
 
 	challengeIDString := tokens[1]

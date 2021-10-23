@@ -3,9 +3,8 @@ package challenge
 import (
 	"context"
 	"fmt"
-	"time"
 
-	"github.com/BranDebs/challenge-bot/command/util"
+	"github.com/BranDebs/challenge-bot/command/base"
 
 	"github.com/BranDebs/challenge-bot/model"
 )
@@ -17,10 +16,6 @@ type Formatter interface {
 	FormatJoin(ctx context.Context, challenge *model.Challenge, userID uint64) string
 }
 
-const (
-	dateLayout = "02-01-2006 15:04:00"
-)
-
 type formatter struct {
 }
 
@@ -30,7 +25,7 @@ func (f formatter) FormatList(ctx context.Context, challenges []*model.Challenge
 		challengesStr = challengesStr + f.formatChallenge(challenge, userID)
 	}
 
-	return util.CleanMarkdownMsg(challengesStr)
+	return base.CleanMarkdownMsg(challengesStr)
 }
 
 func (f formatter) formatChallenge(challenge *model.Challenge, userID uint64) string {
@@ -38,8 +33,8 @@ func (f formatter) formatChallenge(challenge *model.Challenge, userID uint64) st
 		challenge.Name,
 		challenge.ID,
 		challenge.Description,
-		formatTimestampToDate(int64(challenge.StartDate)),
-		formatTimestampToDate(int64(challenge.EndDate)),
+		base.FormatTimestampToDate(int64(challenge.StartDate)),
+		base.FormatTimestampToDate(int64(challenge.EndDate)),
 		string(challenge.Schema),
 		f.formatIsParticipant(challenge.UserIDs, userID),
 	)
@@ -54,24 +49,19 @@ func (f formatter) formatIsParticipant(challengeUserIDs []uint64, userID uint64)
 	return "No"
 }
 
-func formatTimestampToDate(timestamp int64) string {
-	convertedTime := time.Unix(timestamp, 0)
-	return convertedTime.Format(dateLayout)
-}
-
 func (f formatter) FormatCreate(ctx context.Context, challenge *model.Challenge) string {
 	return "Successfully created challenge"
 }
 
 func (f formatter) FormatFind(ctx context.Context, challenge *model.Challenge, userID uint64) string {
 	challengeStr := f.formatChallenge(challenge, userID)
-	return util.CleanMarkdownMsg(challengeStr)
+	return base.CleanMarkdownMsg(challengeStr)
 }
 
 func (f formatter) FormatJoin(ctx context.Context, challenge *model.Challenge, userID uint64) string {
 	challengeStr := "Successfully joined challenge: \n"
 	challengeStr = challengeStr + f.formatChallenge(challenge, userID)
-	return util.CleanMarkdownMsg(challengeStr)
+	return base.CleanMarkdownMsg(challengeStr)
 }
 
 func NewFormatter() Formatter {

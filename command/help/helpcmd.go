@@ -3,9 +3,7 @@ package help
 import (
 	"context"
 
-	"github.com/BranDebs/challenge-bot/command/util"
-
-	common "github.com/BranDebs/challenge-bot/command/common"
+	"github.com/BranDebs/challenge-bot/command/base"
 )
 
 const (
@@ -47,9 +45,9 @@ type HelpCommand struct {
 }
 
 func (c HelpCommand) Execute(ctx context.Context) (string, error) {
-	return util.CleanMarkdownMsg(helpText), nil
+	return base.CleanMarkdownMsg(helpText), nil
 }
 
-func NewHelpCommand() common.Command {
+func NewHelpCommand() base.Command {
 	return &HelpCommand{}
 }

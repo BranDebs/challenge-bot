@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/BranDebs/challenge-bot/command"
-	"github.com/BranDebs/challenge-bot/command/model"
+	"github.com/BranDebs/challenge-bot/command/base"
 
 	"github.com/BranDebs/challenge-bot/validator"
 
@@ -67,25 +67,31 @@ func (b *Bot) Listen() error {
 			replyMsg.ParseMode = parseMode
 
 			cmd, err := cmdFactory.GetCommand(
-				model.MsgData{
+				base.MsgData{
 					Msg:    update.Message.Text,
 					UserID: uint64(update.Message.From.ID),
 				},
 				l, v)
 			if err != nil {
 				replyMsg.Text = err.Error()
-				b.bot.Send(replyMsg)
+				_, _ = b.bot.Send(replyMsg)
+				log.Printf("Unable to get command from factory err: %v", err)
 				continue
 			}
 
 			replyMsgString, err := cmd.Execute(ctx)
 			if err != nil {
 				replyMsg.Text = err.Error()
-				b.bot.Send(replyMsg)
+				_, _ = b.bot.Send(replyMsg)
+				log.Printf("Unable texecute command err: %v", err)
 				continue
 			}
-			replyMsg.Text = replyMsgString
-			b.bot.Send(replyMsg)
+
+			replyMsg.Text = base.CleanMarkdownMsg(replyMsgString)
+			_, err = b.bot.Send(replyMsg)
+			if err != nil {
+				log.Printf("Failed to send reply to bot client err: %v")
+			}
 		}
 	}
 	return nil
