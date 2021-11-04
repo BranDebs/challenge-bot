@@ -18,12 +18,12 @@ type formatter struct{}
 
 func (f formatter) FormatCreate(ctx context.Context, goal *model.Goal) string {
 	formattedGoal := f.formatGoal(goal)
-	return base.CleanMarkdownMsg(formattedGoal)
+	return formattedGoal
 }
 
 func (f formatter) FormatFind(ctx context.Context, goal *model.Goal, userID uint64) string {
 	formattedGoal := f.formatGoal(goal)
-	return base.CleanMarkdownMsg(formattedGoal)
+	return formattedGoal
 }
 
 func (f formatter) formatGoal(goal *model.Goal) string {

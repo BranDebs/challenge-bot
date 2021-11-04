@@ -25,7 +25,7 @@ func (f formatter) FormatList(ctx context.Context, challenges []*model.Challenge
 		challengesStr = challengesStr + f.formatChallenge(challenge, userID)
 	}
 
-	return base.CleanMarkdownMsg(challengesStr)
+	return challengesStr
 }
 
 func (f formatter) formatChallenge(challenge *model.Challenge, userID uint64) string {
@@ -55,13 +55,13 @@ func (f formatter) FormatCreate(ctx context.Context, challenge *model.Challenge)
 
 func (f formatter) FormatFind(ctx context.Context, challenge *model.Challenge, userID uint64) string {
 	challengeStr := f.formatChallenge(challenge, userID)
-	return base.CleanMarkdownMsg(challengeStr)
+	return challengeStr
 }
 
 func (f formatter) FormatJoin(ctx context.Context, challenge *model.Challenge, userID uint64) string {
 	challengeStr := "Successfully joined challenge: \n"
 	challengeStr = challengeStr + f.formatChallenge(challenge, userID)
-	return base.CleanMarkdownMsg(challengeStr)
+	return challengeStr
 }
 
 func NewFormatter() Formatter {

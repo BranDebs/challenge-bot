@@ -45,7 +45,7 @@ type HelpCommand struct {
 }
 
 func (c HelpCommand) Execute(ctx context.Context) (string, error) {
-	return base.CleanMarkdownMsg(helpText), nil
+	return helpText, nil
 }
 
 func NewHelpCommand() base.Command {
