@@ -34,7 +34,7 @@ func (p progressLogic) AddProgress(ctx context.Context, params addProgressParams
 		return err
 	}
 	if !isSuccess {
-		log.Info("User: %v completed challengeID: %v", params.userID, params.challengeID)
+		log.Printf("User: %v completed challengeID: %v\n", params.userID, params.challengeID)
 		return nil
 	}
 	return nil
