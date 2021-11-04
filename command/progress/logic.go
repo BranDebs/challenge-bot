@@ -6,6 +6,8 @@ import (
 
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/model"
+	"github.com/google/martian/log"
+	"github.com/rs/zerolog/log"
 )
 
 type Logic interface {
@@ -33,7 +35,8 @@ func (p progressLogic) AddProgress(ctx context.Context, params addProgressParams
 		return err
 	}
 	if !isSuccess {
-		return ErrFailedToAddProgress
+		log.Info("User: %v completed challengeID: %v", params.userID, params.challengeID)
+		return nil
 	}
 	return nil
 }
