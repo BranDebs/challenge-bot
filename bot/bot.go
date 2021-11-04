@@ -90,7 +90,7 @@ func (b *Bot) Listen() error {
 			replyMsg.Text = base.CleanMarkdownMsg(replyMsgString)
 			_, err = b.bot.Send(replyMsg)
 			if err != nil {
-				log.Printf("Failed to send reply to bot client err: %v")
+				log.Printf("Failed to send reply to bot client err: %v", err)
 			}
 		}
 	}
