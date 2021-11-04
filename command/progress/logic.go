@@ -3,11 +3,10 @@ package progress
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/BranDebs/challenge-bot/logic"
 	"github.com/BranDebs/challenge-bot/model"
-	"github.com/google/martian/log"
-	"github.com/rs/zerolog/log"
 )
 
 type Logic interface {
