@@ -1,5 +1,5 @@
 build:
-	docker build -t challenge_bot .
+	docker build -t challenge-bot .
 
 dev: env
 	docker-compose -f docker-compose.dev.yml up --build app
