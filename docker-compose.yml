@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: challenge_bot
+    ports:
+      - 80:80
+      - 443:433
+    depends_on:
+      - db
+    volumes:
+      - type: bind
+        source: ./config.toml
+        target: /app/config.toml
+      - type: bind
+        source: ./apitoken
+        target: /app/apitoken
+    working_dir: /app
+  db:
+    image: postgres:11-alpine
+    container_name: challenge_db
+    restart: "unless-stopped"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=challenge
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+volumes:
+  pg_data:
