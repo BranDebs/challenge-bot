@@ -1,5 +1,5 @@
 # Overview
-ChallengeBot is an idea to gamify and motivate individuals to achieve their goals. The bot will reside in telegram as the mode of interacting with users. There is a need to provide a backend service for the bot client to provide rich interactions and persistence of data.
+challenge-bot is an idea to gamify and motivate individuals to achieve their goals. The bot will reside in telegram as the mode of interacting with users. There is a need to provide a backend service for the bot client to provide rich interactions and persistence of data.
 
 # Terminology
 Challenge: Consists of progress and goals. Has a deadline and finishes when the goal is hit.
@@ -15,15 +15,15 @@ User: A unique ID that is joins challenges, adds progress and goals.
 
 # Design
 ## Architecture
-This section provides the high level architecture of ChallengeBot. There are two types of architecture level: Infrastructure, Code Base and Persistence.
+This section provides the high level architecture of challenge-bot. There are two types of architecture level: Infrastructure, Code Base and Persistence.
 
 ### Infrastructure
-ChallengeBot will be deployed on AWS. It currently however does not include the use of managed solution like RDS or ElasticCache. As of now it will be deployed in an EC2 instance as a monolith.
+challenge-bot will be deployed on AWS. It currently however does not include the use of managed solution like RDS or ElasticCache. As of now it will be deployed in an EC2 instance as a monolith.
 
 ![Infrastructure architecture.](images/challenge-bot-cloud-architecture.drawio.svg)
 
 ### Code Base
-The code base in ChallengeBot will be split into several components: Protocol, Handler, Repository and Domain.
+The code base in challenge-bot will be split into several components: Protocol, Handler, Repository and Domain.
 The code base tries to abide by Domain Driven Development (DDD) when it is appropriate.
 
 ![Architecture.](images/challenge-bot-architecture.drawio.svg)
@@ -58,10 +58,11 @@ Cache will be generated as such:
 
 Keep track of current user’s state + data
 
-```json
-<user_id>_state: {
+```
+"<user_id>_state": {
   "state": “ADD_PROGRESS_DATA”,
   "challengeID": 1,
+  // ... other required data
 }
 ```
 
