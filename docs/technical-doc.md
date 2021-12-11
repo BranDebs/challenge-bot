@@ -20,17 +20,18 @@ This section provides the high level architecture of ChallengeBot. There are two
 ### Infrastructure
 ChallengeBot will be deployed on AWS. It currently however does not include the use of managed solution like RDS or ElasticCache. As of now it will be deployed in an EC2 instance as a monolith.
 
-[WIP: add architecture image]
+![Infrastructure architecture.](images/challenge-bot-cloud-architecture.drawio.svg)
 
 ### Code Base
 The code base in ChallengeBot will be split into several components: Protocol, Handler, Repository and Domain.
 The code base tries to abide by Domain Driven Development (DDD) when it is appropriate.
 
-[WIP: add code base architecture image]
+![Architecture.](images/challenge-bot-architecture.drawio.svg)
 
 ### Package Design
 Packages will be created with bounded context in mind. This means that the parent package will be in the form of: Challenge, Progress, Goal. Only code that is related to the specific domain will be added within the “parent” package. The coupling of the different domain will be done in the Handler layer.
 
+```
 internal/
 |__challenge/
      |__ model/
@@ -44,6 +45,7 @@ internal/
 |__ storage/
      |__ postgres/
      |__ localcache/
+```
 
 ## Persistence
 Telegram bot API does not provide a way to keep track of sessions or states. It is therefore left to the backend to handle persistence.
