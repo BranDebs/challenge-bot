@@ -4,7 +4,7 @@ Telegram bot to handle challenges
 ## Quick Start
 To run the bot in dev env locally:
 ```bash
-# Runs locally challengebot along with the resources.
+# Runs challenge-bot locally along with the resources.
 make dev
 ```
 > Note that there is hot reload when using this mode.
@@ -37,6 +37,9 @@ Password: postgres123
 Database: challenge
 
 ```
+
+## Technical Document
+The technical document for  how challenge-bot was designed can be found here: [technical-doc.md](docs/technical-doc.md).
 
 ## Schema
 ```golang
