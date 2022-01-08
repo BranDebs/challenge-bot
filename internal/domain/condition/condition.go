@@ -5,13 +5,14 @@ var EmptyCondition = Condition{}
 
 // Condition represents the condition in a Challenge.
 type Condition struct {
+	name  string
 	kind  Kind
 	value Value
 }
 
 // New validates and initialises a new Condition.
-func New(kind Kind, val Value) (Condition, error) {
-	if !kind.Valid() || val.Valid(kind) {
+func New(name string, kind Kind, val Value) (Condition, error) {
+	if len(name) == 0 || !kind.Valid() || val.Valid(kind) {
 		return EmptyCondition, ErrValidation{
 			kind:  kind,
 			value: val,
@@ -19,6 +20,7 @@ func New(kind Kind, val Value) (Condition, error) {
 	}
 
 	return Condition{
+		name:  name,
 		kind:  kind,
 		value: val,
 	}, nil
