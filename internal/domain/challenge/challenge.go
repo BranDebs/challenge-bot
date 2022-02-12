@@ -1,5 +1,14 @@
 package challenge
 
+import (
+	"errors"
+)
+
+var (
+	// ErrConditionTypesEmpty is raised when there is no condition type during creation or update of a challenge.
+	ErrConditionTypesEmpty = errors.New("challenge must have at least a condition")
+)
+
 // EmptyChallenge represents an uninitialised challenge.
 var EmptyChallenge = Challenge{}
 
@@ -9,11 +18,12 @@ type Challenge struct {
 	name               string
 	description        string
 	userIDs            []uint64
+	conditionTypes     ConditionTypes
 	startDate, endDate uint64
 }
 
 // New validates and returns an initialised challenge.
-func New(id uint64, name, description string, userIDs []uint64, startDate, endDate uint64) (Challenge, error) {
+func New(id uint64, name, description string, userIDs []uint64, data []byte, startDate, endDate uint64) (Challenge, error) {
 	if id == 0 || len(name) == 0 || len(userIDs) == 0 || endDate < startDate {
 		return EmptyChallenge, ErrValidation{
 			id:   id,
@@ -21,12 +31,18 @@ func New(id uint64, name, description string, userIDs []uint64, startDate, endDa
 		}
 	}
 
+	cts := NewConditionTypes(data)
+	if cts == nil {
+		return EmptyChallenge, ErrConditionTypesEmpty
+	}
+
 	return Challenge{
-		name:        name,
-		description: description,
-		userIDs:     userIDs,
-		startDate:   startDate,
-		endDate:     endDate,
+		name:           name,
+		description:    description,
+		userIDs:        userIDs,
+		conditionTypes: cts,
+		startDate:      startDate,
+		endDate:        endDate,
 	}, nil
 }
 
@@ -47,6 +63,10 @@ func (c Challenge) Description() string {
 // UserIDs returns the userIDs that are in the Challenge.
 func (c Challenge) UserIDs() []uint64 {
 	return c.userIDs
+}
+
+func (c Challenge) ConditionTypes() ConditionTypes {
+	return c.conditionTypes
 }
 
 // StartDate indicates the start of the Challenge.
@@ -75,12 +95,25 @@ func (c Challenge) HasUserID(userID uint64) bool {
 }
 
 // AddUsers adds userIDs into the Challenge.
-func (c Challenge) AddUsers(userIDs ...uint64) error {
+func (c *Challenge) AddUsers(userIDs ...uint64) error {
 	for _, id := range userIDs {
 		if id == 0 {
 			return ErrUserID(id)
 		}
 		c.userIDs = append(c.userIDs, id)
 	}
+	return nil
+}
+
+// UpdateConditionTypes updates the condition types within the challenge.
+// The update is a full update and not a delta.
+func (c *Challenge) UpdateConditionTypes(data []byte) error {
+	cts := NewConditionTypes(data)
+	if cts == nil {
+		return ErrConditionTypesEmpty
+	}
+
+	c.conditionTypes = cts
+
 	return nil
 }

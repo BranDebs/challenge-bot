@@ -1,5 +1,9 @@
 package condition
 
+import (
+	"strings"
+)
+
 // Kind represents the type of Condition.
 type Kind uint8
 
@@ -27,5 +31,18 @@ func (k Kind) String() string {
 		return "float"
 	default:
 		return "unknown"
+	}
+}
+
+func FromString(s string) Kind {
+	switch strings.ToLower(s) {
+	case "boolean":
+		return Boolean
+	case "integer":
+		return Integer
+	case "float":
+		return Float
+	default:
+		return Unknown
 	}
 }
