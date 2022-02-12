@@ -94,3 +94,36 @@ CREATE_CHALLENGE_NAME<br>
 CREATE_CHALLENGE_DETAIL<br>
 CREATE_CHALLENGE_DATE<br>
 CREATE_CHALLENGE_GOAL
+
+## Data
+![Entity Relation Diagram.](images/challenge-bot-erd.drawio.svg)
+
+### Schema
+```golang
+type Challenge struct {
+    ID uint64
+    Name string
+    Description string
+    UserIDs []uint64
+    StartDate uint64
+    EndDate uint64
+    Schema []byte // example: "{value: int}", "{age: int, money: int64}"
+    // Omitted created_at and updated_at
+}
+
+type Progress struct {    //cannot be updated
+    ID uint64
+    ChallengeID uint64
+    UserID uint64
+    Value []byte // {value: 2}, "{age: 30, money: 50}"
+    is_goal bool
+    // Omitted created_at and updated_at
+}
+
+type User struct {
+    ID uint64 // retrieve from Telegram
+    Username string // retrieve from Telegram
+    // Omitted created_at and updated_at
+}
+```
+
