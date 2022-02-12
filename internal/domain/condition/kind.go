@@ -1,6 +1,8 @@
 package condition
 
 import (
+	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -32,6 +34,16 @@ func (k Kind) String() string {
 	default:
 		return "unknown"
 	}
+}
+
+func (k *Kind) UnmarshalJSON(data []byte) error {
+	s, err := strconv.Unquote(string(data))
+	if err != nil {
+		return fmt.Errorf("unable to unquote string err: %w", err)
+	}
+
+	*k = FromString(s)
+	return nil
 }
 
 func FromString(s string) Kind {
