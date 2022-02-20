@@ -56,5 +56,5 @@ func ParseFloat(v Value) (float64, error) {
 		return 0, errors.New("invalid value")
 	}
 
-	return strconv.ParseFloat(v, 64)
+	return strconv.ParseFloat(string(v), 64)
 }
