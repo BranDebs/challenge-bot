@@ -10,7 +10,7 @@ var (
 )
 
 // EmptyChallenge represents an uninitialised challenge.
-var EmptyChallenge = Challenge{}
+var EmptyChallenge = &Challenge{}
 
 // Challenge represents the metadata of a challenge.
 type Challenge struct {
@@ -23,7 +23,7 @@ type Challenge struct {
 }
 
 // New validates and returns an initialised challenge.
-func New(id uint64, name, description string, userIDs []uint64, data []byte, startDate, endDate uint64) (Challenge, error) {
+func New(id uint64, name, description string, userIDs []uint64, data []byte, startDate, endDate uint64) (*Challenge, error) {
 	if id == 0 || len(name) == 0 || len(userIDs) == 0 || endDate < startDate {
 		return EmptyChallenge, ErrValidation{
 			id:   id,
@@ -36,7 +36,7 @@ func New(id uint64, name, description string, userIDs []uint64, data []byte, sta
 		return EmptyChallenge, ErrConditionTypesEmpty
 	}
 
-	return Challenge{
+	return &Challenge{
 		name:           name,
 		description:    description,
 		userIDs:        userIDs,

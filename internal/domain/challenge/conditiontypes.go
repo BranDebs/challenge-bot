@@ -14,7 +14,7 @@ func NewConditionTypes(data []byte) ConditionTypes {
 		return nil
 	}
 
-	ct := make(ConditionTypes, len(data))
+	ct := make(ConditionTypes)
 	if err := json.Unmarshal(data, &ct); err != nil {
 		return nil
 	}
