@@ -1,11 +1,16 @@
 package condition
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
+	"github.com/BranDebs/challenge-bot/internal/domain/condition/value"
+)
 
 // ErrValidation contains the error for validation.
 type ErrValidation struct {
-	kind  Kind
-	value Value
+	kind  kind.Kind
+	value value.Value
 }
 
 func (err ErrValidation) Error() string {
