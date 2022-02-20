@@ -3,7 +3,6 @@ package challenge
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/BranDebs/challenge-bot/internal/domain/condition"
 )
@@ -17,7 +16,6 @@ func NewConditionTypes(data []byte) ConditionTypes {
 
 	ct := make(ConditionTypes, len(data))
 	if err := json.Unmarshal(data, &ct); err != nil {
-		fmt.Printf("err: %v", err)
 		return nil
 	}
 
