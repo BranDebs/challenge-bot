@@ -16,7 +16,7 @@ func EqualComparer(goal *Condition, progress *Condition) (bool, error) {
 		return false, errors.New("invalid comparer input")
 	}
 
-	if goal.operator != operator.Equal {
+	if goal.Operator != operator.Equal {
 		return false, errors.New("invalid operator")
 	}
 
@@ -33,7 +33,7 @@ func NotEqualComparer(goal, progress *Condition) (bool, error) {
 		return false, errors.New("invalid comparer input")
 	}
 
-	if goal.operator != operator.NotEqual {
+	if goal.Operator != operator.NotEqual {
 		return false, errors.New("invalid operator")
 	}
 
@@ -50,7 +50,7 @@ func LessThanComparer(goal, progress *Condition) (bool, error) {
 		return false, errors.New("invalid comparer input")
 	}
 
-	if goal.operator != operator.LessThan {
+	if goal.Operator != operator.LessThan {
 		return false, errors.New("invalid operator")
 	}
 
@@ -67,7 +67,7 @@ func LessThanEqualComparer(goal, progress *Condition) (bool, error) {
 		return false, errors.New("invalid comparer input")
 	}
 
-	if goal.operator != operator.LessThanEqual {
+	if goal.Operator != operator.LessThanEqual {
 		return false, errors.New("invalid operator")
 	}
 
@@ -84,7 +84,7 @@ func GreaterThanComparer(goal, progress *Condition) (bool, error) {
 		return false, errors.New("invalid comparer input")
 	}
 
-	if goal.operator != operator.GreaterThan {
+	if goal.Operator != operator.GreaterThan {
 		return false, errors.New("invalid operator")
 	}
 
@@ -101,7 +101,7 @@ func GreaterThanEqualComparer(goal, progress *Condition) (bool, error) {
 		return false, errors.New("invalid comparer input")
 	}
 
-	if goal.operator != operator.GreaterThan {
+	if goal.Operator != operator.GreaterThan {
 		return false, errors.New("invalid operator")
 	}
 
@@ -114,10 +114,10 @@ func GreaterThanEqualComparer(goal, progress *Condition) (bool, error) {
 }
 
 func compare(goal, progress *Condition) (int, error) {
-	switch goal.kind {
+	switch goal.Kind {
 	case kind.Boolean:
-		gBool, gErr := value.ParseBool(goal.value)
-		pBool, pErr := value.ParseBool(progress.value)
+		gBool, gErr := value.ParseBool(goal.Value)
+		pBool, pErr := value.ParseBool(progress.Value)
 		if gErr != nil || pErr != nil {
 			return 0, errors.New("failed to compare")
 		}
@@ -127,8 +127,8 @@ func compare(goal, progress *Condition) (int, error) {
 		return -1, nil
 
 	case kind.Integer:
-		gInt, gErr := value.ParseInt(goal.value)
-		pInt, pErr := value.ParseInt(progress.value)
+		gInt, gErr := value.ParseInt(goal.Value)
+		pInt, pErr := value.ParseInt(progress.Value)
 		if gErr != nil || pErr != nil {
 			return 0, errors.New("failed to compare")
 		}
@@ -144,8 +144,8 @@ func compare(goal, progress *Condition) (int, error) {
 		return 0, nil
 
 	case kind.Float:
-		gFloat, gErr := value.ParseFloat(goal.value)
-		pFloat, pErr := value.ParseFloat(progress.value)
+		gFloat, gErr := value.ParseFloat(goal.Value)
+		pFloat, pErr := value.ParseFloat(progress.Value)
 		if gErr != nil || pErr != nil {
 			return 0, errors.New("failed to compare")
 		}

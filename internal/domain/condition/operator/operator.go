@@ -1,6 +1,8 @@
 package operator
 
 import (
+	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -38,6 +40,16 @@ func (opr Operator) String() string {
 	default:
 		return "unknown"
 	}
+}
+
+func (o *Operator) UnmarshalJSON(data []byte) error {
+	s, err := strconv.Unquote(string(data))
+	if err != nil {
+		return fmt.Errorf("unable to unquote string err: %w", err)
+	}
+
+	*o = FromString(s)
+	return nil
 }
 
 func FromString(s string) Operator {

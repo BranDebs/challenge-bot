@@ -2,6 +2,8 @@ package kind
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFromString(t *testing.T) {
@@ -48,6 +50,63 @@ func TestFromString(t *testing.T) {
 				t.Fatalf("want: %v got: %v", tt.want, got)
 				return
 			}
+		})
+	}
+}
+
+func TestKind_UnmarshalJSON(t *testing.T) {
+
+	tests := []struct {
+		name     string
+		data     []byte
+		wantKind Kind
+		wantErr  bool
+	}{
+		{
+			name:     "nil data",
+			data:     nil,
+			wantKind: Unknown,
+			wantErr:  true,
+		},
+		{
+			name:     "empty data",
+			data:     []byte(""),
+			wantKind: Unknown,
+			wantErr:  true,
+		},
+		{
+			name:     "malformed JSON",
+			data:     []byte(`malformed"`),
+			wantKind: Unknown,
+			wantErr:  true,
+		},
+		{
+			name:     "unknown condition kind",
+			data:     []byte(`"unknown kind"`),
+			wantKind: Unknown,
+			wantErr:  false,
+		},
+		{
+			name:     "integer condition kind",
+			data:     []byte(`"integer"`),
+			wantKind: Integer,
+			wantErr:  false,
+		},
+		{
+			name:     "float condition kind case insensitive",
+			data:     []byte(`"fLoAt"`),
+			wantKind: Float,
+			wantErr:  false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			kind := Unknown
+			if err := kind.UnmarshalJSON(tt.data); (err != nil) != tt.wantErr {
+				t.Errorf("Kind.UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			assert.Equal(t, tt.wantKind.String(), kind.String())
 		})
 	}
 }

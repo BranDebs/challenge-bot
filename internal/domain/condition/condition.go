@@ -1,6 +1,9 @@
 package condition
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
 	"github.com/BranDebs/challenge-bot/internal/domain/condition/operator"
 	"github.com/BranDebs/challenge-bot/internal/domain/condition/value"
@@ -9,12 +12,29 @@ import (
 // EmptyCondition represents an uninitialised Condition.
 var EmptyCondition = Condition{}
 
-// Condition represents the condition in a Challenge.
+/*
+Condition represents the condition in a Challenge.
+It is represented in JSON in the following way:
+  [
+    {
+      name: "BodyFat",
+      kind: "float",
+      value: "18.4",
+      operator: "eq"
+    },
+    {
+      name: "GymWeekly",
+      kind: "boolean",
+      value: "true",
+      operator: "neq"
+    }
+  ]
+*/
 type Condition struct {
-	name     string
-	kind     kind.Kind
-	value    value.Value
-	operator operator.Operator
+	Name     string            `json:"Name"`
+	Kind     kind.Kind         `json:"kind"`
+	Value    value.Value       `json:"value"`
+	Operator operator.Operator `json:"operator"`
 }
 
 // New validates and initialises a new Condition.
@@ -27,24 +47,19 @@ func New(name string, kind kind.Kind, val value.Value, operator operator.Operato
 	}
 
 	return Condition{
-		name:     name,
-		kind:     kind,
-		value:    val,
-		operator: operator,
+		Name:     name,
+		Kind:     kind,
+		Value:    val,
+		Operator: operator,
 	}, nil
 }
 
-// Kind returns what kind of Condition this is.
-func (c Condition) Kind() kind.Kind {
-	return c.kind
-}
+func FromJSON(data []byte) ([]*Condition, error) {
+	conditions := make([]*Condition, 0)
 
-// Value returns the value of the Condition.
-func (c Condition) Value() value.Value {
-	return c.value
-}
+	if err := json.Unmarshal(data, &conditions); err != nil {
+		return nil, fmt.Errorf("unable to unmarshal condition err: %w", err)
+	}
 
-// Operator returns the operator used for comparing the condition
-func (c Condition) Operator() operator.Operator {
-	return c.operator
+	return conditions, nil
 }

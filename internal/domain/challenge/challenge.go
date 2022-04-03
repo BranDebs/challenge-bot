@@ -20,12 +20,12 @@ type Challenge struct {
 	name               string
 	description        string
 	userIDs            []uint64
-	conditions         []condition.Condition
+	conditions         []*condition.Condition
 	startDate, endDate uint64
 }
 
 // New validates and returns an initialised challenge.
-func New(id uint64, name, description string, userIDs []uint64, data []byte, startDate, endDate uint64) (*Challenge, error) {
+func New(id uint64, name, description string, userIDs []uint64, conditions []*condition.Condition, startDate, endDate uint64) (*Challenge, error) {
 	if id == 0 || len(name) == 0 || len(userIDs) == 0 || endDate < startDate {
 		return EmptyChallenge, ErrValidation{
 			id:   id,
@@ -33,18 +33,17 @@ func New(id uint64, name, description string, userIDs []uint64, data []byte, sta
 		}
 	}
 
-	cts := NewConditionTypes(data)
-	if cts == nil {
+	if len(conditions) == 0 {
 		return EmptyChallenge, ErrConditionTypesEmpty
 	}
 
 	return &Challenge{
-		name:           name,
-		description:    description,
-		userIDs:        userIDs,
-		conditionTypes: cts,
-		startDate:      startDate,
-		endDate:        endDate,
+		name:        name,
+		description: description,
+		userIDs:     userIDs,
+		conditions:  conditions,
+		startDate:   startDate,
+		endDate:     endDate,
 	}, nil
 }
 
@@ -67,8 +66,8 @@ func (c Challenge) UserIDs() []uint64 {
 	return c.userIDs
 }
 
-func (c Challenge) ConditionTypes() ConditionTypes {
-	return c.conditionTypes
+func (c Challenge) Conditions() []*condition.Condition {
+	return c.conditions
 }
 
 // StartDate indicates the start of the Challenge.
@@ -109,13 +108,12 @@ func (c *Challenge) AddUsers(userIDs ...uint64) error {
 
 // UpdateConditionTypes updates the condition types within the challenge.
 // The update is a full update and not a delta.
-func (c *Challenge) UpdateConditionTypes(data []byte) error {
-	cts := NewConditionTypes(data)
-	if cts == nil {
+func (c *Challenge) UpdateConditionTypes(conditions []*condition.Condition) error {
+	if len(conditions) == 0 {
 		return ErrConditionTypesEmpty
 	}
 
-	c.conditionTypes = cts
+	c.conditions = conditions
 
 	return nil
 }
