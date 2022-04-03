@@ -2,6 +2,8 @@ package challenge
 
 import (
 	"errors"
+
+	"github.com/BranDebs/challenge-bot/internal/domain/condition"
 )
 
 var (
@@ -18,7 +20,7 @@ type Challenge struct {
 	name               string
 	description        string
 	userIDs            []uint64
-	conditionTypes     ConditionTypes
+	conditions         []condition.Condition
 	startDate, endDate uint64
 }
 
