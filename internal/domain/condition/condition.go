@@ -31,7 +31,7 @@ It is represented in JSON in the following way:
   ]
 */
 type Condition struct {
-	Name     string            `json:"Name"`
+	Name     string            `json:"name"`
 	Kind     kind.Kind         `json:"kind"`
 	Value    value.Value       `json:"value"`
 	Operator operator.Operator `json:"operator"`
