@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
 	"github.com/BranDebs/challenge-bot/internal/domain/condition/operator"
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/value"
+	"github.com/BranDebs/challenge-bot/internal/domain/value"
 )
 
 type Comparer func(goal *Condition, progress *Condition) (bool, error)
@@ -115,7 +114,7 @@ func GreaterThanEqualComparer(goal, progress *Condition) (bool, error) {
 
 func compare(goal, progress *Condition) (int, error) {
 	switch goal.Kind {
-	case kind.Boolean:
+	case value.Boolean:
 		gBool, gErr := value.ParseBool(goal.Value)
 		pBool, pErr := value.ParseBool(progress.Value)
 		if gErr != nil || pErr != nil {
@@ -126,7 +125,7 @@ func compare(goal, progress *Condition) (int, error) {
 		}
 		return -1, nil
 
-	case kind.Integer:
+	case value.Integer:
 		gInt, gErr := value.ParseInt(goal.Value)
 		pInt, pErr := value.ParseInt(progress.Value)
 		if gErr != nil || pErr != nil {
@@ -143,7 +142,7 @@ func compare(goal, progress *Condition) (int, error) {
 
 		return 0, nil
 
-	case kind.Float:
+	case value.Float:
 		gFloat, gErr := value.ParseFloat(goal.Value)
 		pFloat, pErr := value.ParseFloat(progress.Value)
 		if gErr != nil || pErr != nil {

@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
 	"github.com/BranDebs/challenge-bot/internal/domain/condition/operator"
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/value"
+	"github.com/BranDebs/challenge-bot/internal/domain/value"
 )
 
 // EmptyCondition represents an uninitialised Condition.
@@ -32,13 +31,13 @@ It is represented in JSON in the following way:
 */
 type Condition struct {
 	Name     string            `json:"name"`
-	Kind     kind.Kind         `json:"kind"`
+	Kind     value.Kind        `json:"kind"`
 	Value    value.Value       `json:"value"`
 	Operator operator.Operator `json:"operator"`
 }
 
 // New validates and initialises a new Condition.
-func New(name string, kind kind.Kind, val value.Value, operator operator.Operator) (Condition, error) {
+func New(name string, kind value.Kind, val value.Value, operator operator.Operator) (Condition, error) {
 	if len(name) == 0 || !kind.Valid() || val.Valid(kind) {
 		return EmptyCondition, ErrValidation{
 			kind:  kind,

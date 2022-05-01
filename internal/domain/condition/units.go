@@ -1,14 +1,14 @@
 package condition
 
 import (
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
+	"github.com/BranDebs/challenge-bot/internal/domain/value"
 )
 
-var units = map[string]kind.Kind{
-	"kg": kind.Float,
-	"g":  kind.Float,
+var units = map[string]value.Kind{
+	"kg": value.Float,
+	"g":  value.Float,
 }
 
-func Units() map[string]kind.Kind {
+func Units() map[string]value.Kind {
 	return units
 }

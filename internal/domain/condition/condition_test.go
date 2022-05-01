@@ -4,9 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
 	"github.com/BranDebs/challenge-bot/internal/domain/condition/operator"
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/value"
+	"github.com/BranDebs/challenge-bot/internal/domain/value"
 )
 
 func TestFromJSON(t *testing.T) {
@@ -40,7 +39,7 @@ func TestFromJSON(t *testing.T) {
 			want: []*Condition{
 				{
 					Name:     "condition1",
-					Kind:     kind.Integer,
+					Kind:     value.Integer,
 					Value:    value.Value("1337"),
 					Operator: operator.LessThan,
 				},
@@ -53,13 +52,13 @@ func TestFromJSON(t *testing.T) {
 			want: []*Condition{
 				{
 					Name:     "condition1",
-					Kind:     kind.Integer,
+					Kind:     value.Integer,
 					Value:    value.Value("1337"),
 					Operator: operator.LessThan,
 				},
 				{
 					Name:     "condition2",
-					Kind:     kind.Float,
+					Kind:     value.Float,
 					Value:    value.Value("1.337"),
 					Operator: operator.Equal,
 				},

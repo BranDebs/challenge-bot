@@ -2,13 +2,11 @@ package value
 
 import (
 	"testing"
-
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
 )
 
 func TestValue_Valid(t *testing.T) {
 	type args struct {
-		k kind.Kind
+		k Kind
 	}
 	tests := []struct {
 		name string
@@ -20,7 +18,7 @@ func TestValue_Valid(t *testing.T) {
 			name: "unknown value kind",
 			v:    "",
 			args: args{
-				k: kind.Unknown,
+				k: Unknown,
 			},
 			want: false,
 		},
@@ -28,7 +26,7 @@ func TestValue_Valid(t *testing.T) {
 			name: "mismatched value kind",
 			v:    "12",
 			args: args{
-				k: kind.Boolean,
+				k: Boolean,
 			},
 			want: false,
 		},
@@ -36,7 +34,7 @@ func TestValue_Valid(t *testing.T) {
 			name: "valid value kind",
 			v:    "12.34",
 			args: args{
-				k: kind.Float,
+				k: Float,
 			},
 			want: true,
 		},

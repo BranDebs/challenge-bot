@@ -3,13 +3,12 @@ package condition
 import (
 	"fmt"
 
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/value"
+	"github.com/BranDebs/challenge-bot/internal/domain/value"
 )
 
 // ErrValidation contains the error for validation.
 type ErrValidation struct {
-	kind  kind.Kind
+	kind  value.Kind
 	value value.Value
 }
 

@@ -4,8 +4,6 @@ import (
 	"errors"
 	"strconv"
 	"strings"
-
-	"github.com/BranDebs/challenge-bot/internal/domain/condition/kind"
 )
 
 // Value represents the value of a condition
@@ -13,7 +11,7 @@ type Value string
 
 // Valid returns true if the value is valid.
 // A valid Value is based off the Kind types.
-func (v Value) Valid(k kind.Kind) bool {
+func (v Value) Valid(k Kind) bool {
 	if !k.Valid() {
 		return false
 	}
@@ -21,13 +19,13 @@ func (v Value) Valid(k kind.Kind) bool {
 	s := strings.ToLower(string(v))
 
 	switch k {
-	case kind.Boolean:
+	case Boolean:
 		_, err := strconv.ParseBool(s)
 		return err == nil
-	case kind.Integer:
+	case Integer:
 		_, err := strconv.ParseInt(s, 10, 64)
 		return err == nil
-	case kind.Float:
+	case Float:
 		_, err := strconv.ParseFloat(s, 32)
 		return err == nil
 	default:
@@ -36,7 +34,7 @@ func (v Value) Valid(k kind.Kind) bool {
 }
 
 func ParseBool(v Value) (bool, error) {
-	if !v.Valid(kind.Boolean) {
+	if !v.Valid(Boolean) {
 		return false, errors.New("invalid value")
 	}
 
@@ -44,7 +42,7 @@ func ParseBool(v Value) (bool, error) {
 }
 
 func ParseInt(v Value) (int64, error) {
-	if !v.Valid(kind.Integer) {
+	if !v.Valid(Integer) {
 		return 0, errors.New("invalid value")
 	}
 
@@ -52,7 +50,7 @@ func ParseInt(v Value) (int64, error) {
 }
 
 func ParseFloat(v Value) (float64, error) {
-	if !v.Valid(kind.Float) {
+	if !v.Valid(Float) {
 		return 0, errors.New("invalid value")
 	}
 
