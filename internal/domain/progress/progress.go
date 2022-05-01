@@ -1,6 +1,8 @@
 package progress
 
-import "github.com/BranDebs/challenge-bot/internal/domain/condition"
+import (
+	"github.com/BranDebs/challenge-bot/internal/domain/entry"
+)
 
 var EmptyProgress = &Progress{}
 
@@ -8,8 +10,7 @@ type Progress struct {
 	ID          uint64
 	UserID      uint64
 	ChallengeID uint64
-	Values      []condition.Condition
-	IsGoal      bool
+	Entries     []entry.Entry
 	UpdatedAt   uint64
 }
 
@@ -19,14 +20,13 @@ func New(id uint64, userID uint64, challengeID uint64, data []byte, isGoal bool,
 	}
 
 	// make data into conditions
-	values := make([]condition.Condition, 0)
+	entries := make([]entry.Entry, 0)
 
 	return &Progress{
 		ID:          id,
 		UserID:      userID,
 		ChallengeID: challengeID,
-		Values:      values,
-		IsGoal:      isGoal,
+		Entries:     entries,
 		UpdatedAt:   updatedAt,
 	}, nil
 }

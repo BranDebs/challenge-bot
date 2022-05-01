@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/BranDebs/challenge-bot/internal/domain/condition/operator"
-	"github.com/BranDebs/challenge-bot/internal/domain/value"
+	"github.com/BranDebs/challenge-bot/internal/domain/entry"
 )
 
 func TestFromJSON(t *testing.T) {
@@ -38,9 +38,11 @@ func TestFromJSON(t *testing.T) {
 			data: []byte(`[{"name":"condition1","kind":"integer","value":"1337","operator":"lt"}]`),
 			want: []*Condition{
 				{
-					Name:     "condition1",
-					Kind:     value.Integer,
-					Value:    value.Value("1337"),
+					Entry: entry.Entry{
+						Name:  "condition1",
+						Kind:  entry.Integer,
+						Value: entry.Value("1337"),
+					},
 					Operator: operator.LessThan,
 				},
 			},
@@ -51,15 +53,19 @@ func TestFromJSON(t *testing.T) {
 			data: []byte(`[{"name":"condition1","kind":"integer","value":"1337","operator":"lt"},{"name":"condition2","kind":"float","value":"1.337","operator":"eq"}]`),
 			want: []*Condition{
 				{
-					Name:     "condition1",
-					Kind:     value.Integer,
-					Value:    value.Value("1337"),
+					Entry: entry.Entry{
+						Name:  "condition1",
+						Kind:  entry.Integer,
+						Value: entry.Value("1337"),
+					},
 					Operator: operator.LessThan,
 				},
 				{
-					Name:     "condition2",
-					Kind:     value.Float,
-					Value:    value.Value("1.337"),
+					Entry: entry.Entry{
+						Name:  "condition2",
+						Kind:  entry.Float,
+						Value: entry.Value("1.337"),
+					},
 					Operator: operator.Equal,
 				},
 			},

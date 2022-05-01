@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/BranDebs/challenge-bot/internal/domain/condition/operator"
-	"github.com/BranDebs/challenge-bot/internal/domain/value"
+	"github.com/BranDebs/challenge-bot/internal/domain/entry"
 )
 
 type Comparer func(goal *Condition, progress *Condition) (bool, error)
@@ -114,9 +114,9 @@ func GreaterThanEqualComparer(goal, progress *Condition) (bool, error) {
 
 func compare(goal, progress *Condition) (int, error) {
 	switch goal.Kind {
-	case value.Boolean:
-		gBool, gErr := value.ParseBool(goal.Value)
-		pBool, pErr := value.ParseBool(progress.Value)
+	case entry.Boolean:
+		gBool, gErr := entry.ParseBool(goal.Value)
+		pBool, pErr := entry.ParseBool(progress.Value)
 		if gErr != nil || pErr != nil {
 			return 0, errors.New("failed to compare")
 		}
@@ -125,9 +125,9 @@ func compare(goal, progress *Condition) (int, error) {
 		}
 		return -1, nil
 
-	case value.Integer:
-		gInt, gErr := value.ParseInt(goal.Value)
-		pInt, pErr := value.ParseInt(progress.Value)
+	case entry.Integer:
+		gInt, gErr := entry.ParseInt(goal.Value)
+		pInt, pErr := entry.ParseInt(progress.Value)
 		if gErr != nil || pErr != nil {
 			return 0, errors.New("failed to compare")
 		}
@@ -142,9 +142,9 @@ func compare(goal, progress *Condition) (int, error) {
 
 		return 0, nil
 
-	case value.Float:
-		gFloat, gErr := value.ParseFloat(goal.Value)
-		pFloat, pErr := value.ParseFloat(progress.Value)
+	case entry.Float:
+		gFloat, gErr := entry.ParseFloat(goal.Value)
+		pFloat, pErr := entry.ParseFloat(progress.Value)
 		if gErr != nil || pErr != nil {
 			return 0, errors.New("failed to compare")
 		}
